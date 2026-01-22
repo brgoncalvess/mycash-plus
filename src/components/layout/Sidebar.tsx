@@ -48,25 +48,15 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
             )}
         >
             {/* Logo Area */}
-            <div className="h-20 flex items-center justify-between px-6 border-b border-secondary-50">
-                <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
+            <div className="h-16 flex items-center px-6 border-b border-secondary-50">
+                <div className="flex items-center gap-3 overflow-hidden whitespace-nowrap">
                     <span className={cn(
                         "font-bold text-2xl text-secondary transition-all duration-300",
-                        isCollapsed ? "opacity-0 w-0" : "opacity-100"
+                        isCollapsed ? "opacity-0 w-0 -translate-x-4" : "opacity-100 w-auto translate-x-0"
                     )}>
                         Mycash+
                     </span>
                 </div>
-
-                {/* Collapse Toggle Button - Inside header */}
-                {!isCollapsed && (
-                    <button
-                        onClick={onToggle}
-                        className="flex items-center justify-center w-8 h-8 rounded-lg bg-background hover:bg-secondary-50 transition-colors text-secondary"
-                    >
-                        <ChevronLeft size={16} />
-                    </button>
-                )}
             </div>
 
             {/* Navigation */}
@@ -86,7 +76,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                         >
                             <item.icon
                                 size={20}
-                                className="flex-shrink-0"
+                                className="flex-shrink-0 text-secondary"
                             />
                             <span className={cn(
                                 "font-medium whitespace-nowrap transition-all duration-300 origin-left text-sm",
@@ -97,7 +87,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
 
                             {/* Tooltip for Collapsed State */}
                             {isCollapsed && (
-                                <div className="absolute left-full ml-4 px-3 py-1.5 bg-secondary text-surface text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 delay-100 whitespace-nowrap z-50 shadow-float">
+                                <div className="absolute left-full ml-4 px-3 py-1.5 bg-secondary text-surface text-sm rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 delay-100 whitespace-nowrap z-50 shadow-float">
                                     {item.label}
                                 </div>
                             )}
@@ -109,13 +99,13 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
             {/* User Profile */}
             <div className="p-4 border-t border-secondary-50">
                 <div className={cn(
-                    "flex items-center gap-3 p-2 rounded-xl transition-colors hover:bg-background cursor-pointer overflow-hidden",
+                    "flex items-center gap-3 overflow-hidden",
                     isCollapsed ? "justify-center" : ""
                 )}>
                     <img
                         src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                         alt="User"
-                        className="w-10 h-10 rounded-full border-2 border-secondary-50 flex-shrink-0"
+                        className="w-10 h-10 rounded-full flex-shrink-0"
                     />
                     <div className={cn(
                         "flex-col transition-all duration-300 overflow-hidden whitespace-nowrap",
@@ -127,15 +117,13 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                 </div>
             </div>
 
-            {/* Collapse Toggle Button - Outside for collapsed state */}
-            {isCollapsed && (
-                <button
-                    onClick={onToggle}
-                    className="absolute -right-3 top-24 w-6 h-6 bg-surface border border-secondary-50 rounded-full flex items-center justify-center shadow-sm hover:bg-background transition-colors z-50 text-secondary"
-                >
-                    <ChevronRight size={14} />
-                </button>
-            )}
+            {/* Collapse Toggle Button */}
+            <button
+                onClick={onToggle}
+                className="absolute -right-3 top-6 w-6 h-6 bg-surface border border-secondary-50 rounded-full flex items-center justify-center shadow-sm hover:bg-background transition-colors z-50 text-secondary"
+            >
+                {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+            </button>
         </aside>
     );
 }
