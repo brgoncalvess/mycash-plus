@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     LayoutDashboard,
     Target,
@@ -6,22 +6,23 @@ import {
     ArrowLeftRight,
     User,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 type NavItem = {
     icon: React.ElementType;
     label: string;
-    id: string;
+    path: string;
 };
 
 const navItems: NavItem[] = [
-    { icon: LayoutDashboard, label: 'Dashboard', id: 'dashboard' },
-    { icon: Target, label: 'Objetivos', id: 'goals' },
-    { icon: CreditCard, label: 'Cartões', id: 'cards' },
-    { icon: ArrowLeftRight, label: 'Transações', id: 'transactions' },
-    { icon: User, label: 'Perfil', id: 'profile' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+    { icon: Target, label: 'Objetivos', path: '/goals' },
+    { icon: CreditCard, label: 'Cartões', path: '/cards' },
+    { icon: ArrowLeftRight, label: 'Transações', path: '/transactions' },
+    { icon: User, label: 'Perfil', path: '/profile' },
 ];
 
 interface SidebarProps {
@@ -30,7 +31,14 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
-    const [activeId, setActiveId] = useState('dashboard');
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // Check active path logic
+    const isActive = (path: string) => {
+        if (path === '/' && location.pathname === '/dashboard') return true;
+        return location.pathname === path;
+    };
 
     return (
         <aside
@@ -58,11 +66,11 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
             <nav className="flex-1 py-6 flex flex-col gap-2 px-3 overflow-y-auto overflow-x-hidden">
                 {navItems.map((item) => (
                     <button
-                        key={item.id}
-                        onClick={() => setActiveId(item.id)}
+                        key={item.path}
+                        onClick={() => navigate(item.path)}
                         className={cn(
                             "flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative",
-                            activeId === item.id
+                            isActive(item.path)
                                 ? "bg-black text-white"
                                 : "text-gray-500 hover:bg-gray-50 hover:text-black"
                         )}
@@ -71,7 +79,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                             size={20}
                             className={cn(
                                 "flex-shrink-0 transition-colors",
-                                activeId === item.id ? "text-brand" : "text-current"
+                                isActive(item.path) ? "text-brand" : "text-current"
                             )}
                         />
                         <span className={cn(

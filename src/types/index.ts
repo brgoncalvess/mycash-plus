@@ -7,10 +7,10 @@ export interface Transaction {
     amount: number;
     description: string;
     category: string;
-    date: string; // ISO string
+    date: string; // ISO 8601
     accountId: string;
-    memberId?: string; // Optional (family transaction)
-    installments?: number; // 1 = one time
+    memberId?: string; // Optional for family-shared
+    installments?: number; // 1 = instant
     status: TransactionStatus;
 }
 
@@ -63,15 +63,12 @@ export interface Category {
     color: string;
 }
 
-// Filter State types
-export interface DateRange {
-    start: Date;
-    end: Date;
-}
-
 export interface GlobalFilters {
-    memberId: string | null; // null = all
-    dateRange: DateRange;
+    memberId: string | null;
+    dateRange: {
+        start: Date;
+        end: Date;
+    };
     transactionType: 'all' | 'income' | 'expense';
     searchQuery: string;
 }

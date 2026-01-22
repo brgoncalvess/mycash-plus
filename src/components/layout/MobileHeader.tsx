@@ -2,24 +2,32 @@ import React, { useState } from 'react';
 import { X, LayoutDashboard, Target, CreditCard, ArrowLeftRight, User, LogOut } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 type NavItem = {
     icon: React.ElementType;
     label: string;
-    id: string;
+    path: string;
 };
 
 const navItems: NavItem[] = [
-    { icon: LayoutDashboard, label: 'Dashboard', id: 'dashboard' },
-    { icon: Target, label: 'Objetivos', id: 'goals' },
-    { icon: CreditCard, label: 'Cartões', id: 'cards' },
-    { icon: ArrowLeftRight, label: 'Transações', id: 'transactions' },
-    { icon: User, label: 'Perfil', id: 'profile' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+    { icon: Target, label: 'Objetivos', path: '/goals' },
+    { icon: CreditCard, label: 'Cartões', path: '/cards' },
+    { icon: ArrowLeftRight, label: 'Transações', path: '/transactions' },
+    { icon: User, label: 'Perfil', path: '/profile' },
 ];
 
 export function MobileHeader() {
     const [isOpen, setIsOpen] = useState(false);
-    const [activeId, setActiveId] = useState('dashboard');
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // Check active path logic
+    const isActive = (path: string) => {
+        if (path === '/' && location.pathname === '/dashboard') return true;
+        return location.pathname === path;
+    };
 
     return (
         <>
@@ -75,21 +83,21 @@ export function MobileHeader() {
                             <div className="flex flex-col gap-2">
                                 {navItems.map((item) => (
                                     <button
-                                        key={item.id}
+                                        key={item.path}
                                         onClick={() => {
-                                            setActiveId(item.id);
+                                            navigate(item.path);
                                             setIsOpen(false);
                                         }}
                                         className={cn(
                                             "flex items-center gap-3 px-4 py-3 rounded-xl transition-all",
-                                            activeId === item.id
+                                            isActive(item.path)
                                                 ? "bg-black text-white"
                                                 : "text-gray-600 hover:bg-gray-50 text-black"
                                         )}
                                     >
                                         <item.icon
                                             size={20}
-                                            className={activeId === item.id ? "text-brand" : "text-current"}
+                                            className={isActive(item.path) ? "text-brand" : "text-current"}
                                         />
                                         <span className="font-medium">{item.label}</span>
                                     </button>
