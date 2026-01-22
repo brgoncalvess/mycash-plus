@@ -5,13 +5,15 @@ import { Outlet } from 'react-router-dom';
 
 // Placeholder Pages (will be replaced by actual components later)
 import { SummarySection } from './components/dashboard/summary/SummarySection';
+import { DashboardHeader } from './components/dashboard/DashboardHeader';
 
 const Dashboard = () => (
-    <div className="flex flex-col gap-8 pb-20">
-        <header className="mb-0">
+    <div className="flex flex-col gap-6 pb-20">
+        <div>
             <h1 className="text-2xl font-bold text-secondary mb-1">Dashboard</h1>
             <p className="text-gray-500">Visão geral das suas finanças</p>
-        </header>
+        </div>
+        <DashboardHeader />
         <SummarySection />
     </div>
 );
