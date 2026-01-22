@@ -161,8 +161,8 @@ function Layout() {
             <MobileHeader />
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-[1600px]">
+            <main className="flex-1 overflow-y-auto pt-16 lg:pt-0">
+                <div className="w-full px-4 sm:px-6 lg:px-8 py-6 max-w-[1600px] mx-auto">
                     <Outlet />
                 </div>
             </main>
