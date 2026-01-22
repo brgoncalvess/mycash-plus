@@ -4,6 +4,7 @@ import { SummarySection } from './components/dashboard/summary/SummarySection';
 import { DashboardHeader } from './components/dashboard/DashboardHeader';
 import { ExpensesByCategoryCarousel } from './components/dashboard/categories/ExpensesByCategoryCarousel';
 import { FinancialFlowChart } from './components/dashboard/charts/FinancialFlowChart';
+import { CreditCardsWidget } from './components/dashboard/widgets/CreditCardsWidget';
 import { Sidebar } from './components/layout/Sidebar';
 import { MobileHeader } from './components/layout/MobileHeader';
 
@@ -62,34 +63,7 @@ const Dashboard = () => (
             {/* Right Column - 1/3 width */}
             <div className="flex flex-col gap-6">
                 {/* Cards & Accounts Widget */}
-                <section className="bg-surface border border-secondary-50 rounded-2xl p-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-base font-bold text-secondary flex items-center gap-2">
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                            </svg>
-                            Cards & contas
-                        </h2>
-                        <div className="flex items-center gap-1">
-                            <button className="w-6 h-6 flex items-center justify-center rounded hover:bg-background">
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                </svg>
-                            </button>
-                            <button className="w-6 h-6 flex items-center justify-center rounded hover:bg-background">
-                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div className="space-y-3">
-                        {/* Card items placeholder */}
-                        <div className="text-xs text-gray-400 text-center py-4">
-                            Cards e contas (em desenvolvimento)
-                        </div>
-                    </div>
-                </section>
+                <CreditCardsWidget />
 
                 {/* Upcoming Expenses Widget */}
                 <section className="bg-surface border border-secondary-50 rounded-2xl p-6">
