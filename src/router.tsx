@@ -4,7 +4,17 @@ import { FinanceProvider } from './context/FinanceContext';
 import { Outlet } from 'react-router-dom';
 
 // Placeholder Pages (will be replaced by actual components later)
-const Dashboard = () => <div className="p-4"><h1>Dashboard</h1></div>;
+import { SummarySection } from './components/dashboard/summary/SummarySection';
+
+const Dashboard = () => (
+    <div className="flex flex-col gap-8 pb-20">
+        <header className="mb-0">
+            <h1 className="text-2xl font-bold text-secondary mb-1">Dashboard</h1>
+            <p className="text-gray-500">Visão geral das suas finanças</p>
+        </header>
+        <SummarySection />
+    </div>
+);
 const Goals = () => <div className="p-4"><h1>Objetivos</h1></div>;
 const Cards = () => <div className="p-4"><h1>Cartões</h1></div>;
 const Transactions = () => <div className="p-4"><h1>Transações</h1></div>;
