@@ -33,18 +33,18 @@ export function DashboardHeader() {
 
     return (
         <div className="relative w-full">
-            <header className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center w-full">
-                {/* Left Section: Search + Filters + Date */}
-                <div className="flex items-center gap-2">
+            <header className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center w-full bg-surface/50 backdrop-blur-sm p-1 rounded-full border border-transparent">
+                {/* Left Group: Search, Filter, Date, Members */}
+                <div className="flex flex-wrap items-center gap-2 flex-1">
                     {/* Search Input */}
-                    <div className="relative w-full sm:w-auto">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                    <div className="relative flex-1 sm:flex-initial">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                         <input
                             type="text"
                             placeholder="Pesquisar"
                             value={searchValue}
                             onChange={handleSearchChange}
-                            className="w-full sm:w-[200px] h-10 pl-9 pr-3 rounded-full border border-secondary-50 bg-surface text-sm text-secondary placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-secondary-500/20 focus:border-secondary-500/30 transition-all"
+                            className="w-full sm:w-[240px] h-12 pl-11 pr-4 rounded-full border border-secondary-50 bg-surface text-sm text-secondary placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand/30 transition-all shadow-sm"
                         />
                     </div>
 
@@ -52,37 +52,34 @@ export function DashboardHeader() {
                     <button
                         onClick={() => setShowFilters(!showFilters)}
                         className={cn(
-                            "flex items-center justify-center w-10 h-10 rounded-full border transition-all shrink-0",
+                            "flex items-center justify-center w-12 h-12 rounded-full border transition-all shrink-0 shadow-sm",
                             showFilters
                                 ? "bg-secondary border-secondary text-surface"
-                                : "bg-surface border-secondary-50 text-secondary hover:border-secondary-500/20"
+                                : "bg-surface border-secondary-50 text-secondary hover:border-brand/30 hover:bg-background"
                         )}
                     >
-                        <SlidersHorizontal size={16} />
+                        <SlidersHorizontal size={18} />
                     </button>
 
                     {/* Date Range Button */}
-                    <button className="hidden sm:flex items-center gap-2 h-10 px-4 bg-surface border border-secondary-50 rounded-full text-sm text-secondary hover:border-secondary-500/20 transition-all whitespace-nowrap">
-                        <Calendar size={16} />
-                        <span className="text-xs font-medium">{dateRangeText}</span>
+                    <button className="flex items-center gap-3 h-12 px-6 bg-surface border border-secondary-50 rounded-full text-sm text-secondary hover:border-brand/30 hover:bg-background transition-all whitespace-nowrap shadow-sm">
+                        <Calendar size={18} className="text-gray-400" />
+                        <span className="font-medium text-secondary">{dateRangeText}</span>
                     </button>
-                </div>
 
-                {/* Right Section: Members + New Transaction */}
-                <div className="flex items-center gap-3 ml-auto">
-                    {/* Family Members */}
-                    <div className="flex items-center -space-x-2">
-                        {members.slice(0, 2).map((member) => {
+                    {/* Family Members Stack */}
+                    <div className="flex items-center -space-x-3 ml-2">
+                        {members.map((member) => {
                             const isSelected = filters.memberId === member.id;
                             return (
                                 <button
                                     key={member.id}
                                     onClick={() => handleMemberClick(member.id)}
                                     className={cn(
-                                        "relative w-10 h-10 rounded-full border-2 transition-all hover:scale-110 hover:z-10",
+                                        "relative w-11 h-11 rounded-full border-2 transition-all hover:scale-110 hover:z-20",
                                         isSelected
-                                            ? "border-secondary ring-2 ring-brand/30"
-                                            : "border-surface hover:border-secondary-50"
+                                            ? "border-brand z-10 scale-105"
+                                            : "border-surface"
                                     )}
                                     title={member.name}
                                 >
@@ -92,7 +89,7 @@ export function DashboardHeader() {
                                         className="w-full h-full rounded-full object-cover"
                                     />
                                     {isSelected && (
-                                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-brand rounded-full border-2 border-surface flex items-center justify-center">
+                                        <div className="absolute -bottom-0.5 -right-0.5 w-4.5 h-4.5 bg-brand rounded-full border-2 border-surface flex items-center justify-center">
                                             <svg className="w-2.5 h-2.5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
                                             </svg>
@@ -102,14 +99,16 @@ export function DashboardHeader() {
                             );
                         })}
 
-                        <button className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 transition-all">
-                            <Plus size={16} className="text-secondary" />
+                        <button className="w-11 h-11 rounded-full bg-gray-100 border-2 border-surface flex items-center justify-center hover:bg-gray-200 transition-all text-secondary z-0">
+                            <Plus size={20} />
                         </button>
                     </div>
+                </div>
 
-                    {/* New Transaction Button */}
-                    <button className="flex items-center gap-2 h-10 px-5 bg-secondary text-surface rounded-full text-sm font-semibold hover:bg-secondary-500 transition-colors whitespace-nowrap">
-                        <Plus size={16} />
+                {/* Right Group: New Transaction */}
+                <div className="flex items-center lg:ml-auto">
+                    <button className="flex items-center justify-center gap-2 h-12 px-8 bg-secondary text-surface rounded-full text-base font-bold hover:bg-secondary/90 transition-all shadow-md active:scale-95 group w-full lg:w-auto">
+                        <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
                         <span>Nova transação</span>
                     </button>
                 </div>
@@ -118,21 +117,18 @@ export function DashboardHeader() {
             {/* Filter Popover */}
             {showFilters && (
                 <>
-                    {/* Backdrop */}
                     <div
                         className="fixed inset-0 z-40"
                         onClick={() => setShowFilters(false)}
                     />
 
-                    {/* Popover Content */}
-                    <div className="absolute top-full left-0 sm:left-auto sm:right-auto mt-2 w-full sm:w-80 bg-surface/95 backdrop-blur-xl border border-secondary-50 rounded-2xl shadow-float p-4 z-50">
-                        <div className="space-y-3">
-                            {/* Transaction Type */}
+                    <div className="absolute top-full left-0 sm:left-auto mt-3 w-full sm:w-80 bg-surface/95 backdrop-blur-xl border border-secondary-50 rounded-2xl shadow-float p-5 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="space-y-4">
                             <div>
-                                <label className="text-xs font-semibold text-secondary mb-2 block">
+                                <h3 className="text-sm font-bold text-secondary mb-3">
                                     Tipo de Transação
-                                </label>
-                                <div className="flex gap-2">
+                                </h3>
+                                <div className="flex gap-2 p-1 bg-background rounded-xl">
                                     {[
                                         { value: 'all', label: 'Todos' },
                                         { value: 'income', label: 'Receitas' },
@@ -142,10 +138,10 @@ export function DashboardHeader() {
                                             key={option.value}
                                             onClick={() => handleTransactionTypeChange(option.value as any)}
                                             className={cn(
-                                                "flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all",
+                                                "flex-1 px-4 py-2 rounded-lg text-xs font-bold transition-all",
                                                 filters.transactionType === option.value
-                                                    ? "bg-secondary text-surface"
-                                                    : "bg-background text-secondary hover:bg-secondary-50"
+                                                    ? "bg-secondary text-surface shadow-sm"
+                                                    : "text-gray-500 hover:text-secondary"
                                             )}
                                         >
                                             {option.label}
