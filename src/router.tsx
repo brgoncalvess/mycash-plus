@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { SummarySection } from './components/dashboard/summary/SummarySection';
 import { DashboardHeader } from './components/dashboard/DashboardHeader';
 import { ExpensesByCategoryCarousel } from './components/dashboard/categories/ExpensesByCategoryCarousel';
+import { FinancialFlowChart } from './components/dashboard/charts/FinancialFlowChart';
 import { Sidebar } from './components/layout/Sidebar';
 import { MobileHeader } from './components/layout/MobileHeader';
 
@@ -28,30 +29,7 @@ const Dashboard = () => (
             {/* Left Column - 2/3 width */}
             <div className="lg:col-span-2 flex flex-col gap-6">
                 {/* Financial Flow Chart */}
-                <section className="bg-surface border border-secondary-50 rounded-2xl p-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-bold text-secondary flex items-center gap-2">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                            </svg>
-                            Fluxo financeiro
-                        </h2>
-                        <div className="flex items-center gap-4 text-xs">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-brand"></div>
-                                <span className="text-gray-600">Receitas</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                                <span className="text-gray-600">Despesas</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="h-64 flex items-center justify-center text-gray-400">
-                        {/* Placeholder for chart */}
-                        <p className="text-sm">Gráfico de fluxo financeiro</p>
-                    </div>
-                </section>
+                <FinancialFlowChart />
 
                 {/* Detailed Statement Table */}
                 <section className="bg-surface border border-secondary-50 rounded-2xl p-6">
