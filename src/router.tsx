@@ -6,6 +6,7 @@ import { Outlet } from 'react-router-dom';
 // Placeholder Pages (will be replaced by actual components later)
 import { SummarySection } from './components/dashboard/summary/SummarySection';
 import { DashboardHeader } from './components/dashboard/DashboardHeader';
+import { ExpensesByCategoryCarousel } from './components/dashboard/categories/ExpensesByCategoryCarousel';
 
 const Dashboard = () => (
     <div className="flex flex-col gap-6 pb-20">
@@ -15,6 +16,12 @@ const Dashboard = () => (
         </div>
         <DashboardHeader />
         <SummarySection />
+
+        {/* Expenses by Category */}
+        <section>
+            <h2 className="text-lg font-bold text-secondary mb-4">Gastos por Categoria</h2>
+            <ExpensesByCategoryCarousel />
+        </section>
     </div>
 );
 const Goals = () => <div className="p-4"><h1>Objetivos</h1></div>;
