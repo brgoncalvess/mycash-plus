@@ -161,7 +161,10 @@ function Layout() {
             <MobileHeader />
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto pt-16 lg:pt-0">
+            <main
+                className={`flex-1 overflow-y-auto pt-16 lg:pt-0 transition-all duration-300 ${isSidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'
+                    }`}
+            >
                 <div className="w-full px-4 sm:px-6 lg:px-8 py-6 max-w-[1600px] mx-auto">
                     <Outlet />
                 </div>
