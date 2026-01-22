@@ -1,0 +1,18 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 625.955 263.54" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="linhas">
+<path id="brading-stroke" d="M2.04556 250.924C18.0565 218.902 64.3859 136.667 121.616 63.9028C178.847 -8.86171 250.726 33.5842 279.511 63.9028C455.699 172.641 582.526 66.9687 623.916 0.540445" stroke="var(--stroke-0, #C4E703)" stroke-width="2.04395"/>
+<path id="brading-fundo" d="M624.935 251.946H3.06438C19.0753 219.924 65.4047 137.689 122.635 64.9246C179.866 -7.83991 251.745 34.606 280.53 64.9246C456.718 173.663 583.545 67.9905 624.935 1.56224V251.946Z" fill="url(#paint0_linear_6_815)" fill-opacity="0.87"/>
+<path id="red-fundo" d="M340.317 84.6951C240.572 49.9481 71.8788 189.447 0 263.54H623.915V123.019C623.744 132.898 614.615 156.744 579.459 173.096C535.514 193.535 464.998 128.129 340.317 84.6951Z" fill="url(#paint1_linear_6_815)" fill-opacity="0.51"/>
+<path id="red-stroke" d="M1.01883 262.677C72.8976 188.584 241.591 49.0842 341.336 83.8313C466.017 127.265 536.533 192.671 580.478 172.232C615.633 155.88 624.763 132.034 624.933 122.155" stroke="var(--stroke-0, #E61E32)" stroke-width="2.04395"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_6_815" x1="314" y1="1.56224" x2="314" y2="251.946" gradientUnits="userSpaceOnUse">
+<stop stop-color="#EDFF8B"/>
+<stop offset="1" stop-color="white"/>
+</linearGradient>
+<linearGradient id="paint1_linear_6_815" x1="311.957" y1="79.2324" x2="311.702" y2="264.051" gradientUnits="userSpaceOnUse">
+<stop stop-color="#EB4B5B"/>
+<stop offset="1" stop-color="white"/>
+</linearGradient>
+</defs>
+</svg>
