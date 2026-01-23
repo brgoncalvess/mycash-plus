@@ -43,7 +43,7 @@ export function CreditCardsWidget() {
     };
 
     return (
-        <section className="bg-gray-100/50 border border-secondary-50 rounded-2xl p-6 h-full flex flex-col">
+        <section className="bg-gray-100/50 border border-secondary-50 rounded-2xl p-6 flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-base font-bold text-secondary flex items-center gap-2">
@@ -70,7 +70,7 @@ export function CreditCardsWidget() {
 
             {/* List */}
             {cards.length > 0 && (
-                <div className="flex-1 flex flex-col gap-3 min-h-[300px]">
+                <div className="flex flex-col gap-3">
                     {displayedCards.map((card) => {
                         const usagePercentage = Math.round((card.currentInvoice / card.limit) * 100);
 
@@ -82,23 +82,25 @@ export function CreditCardsWidget() {
                                 {/* Icon Block */}
                                 <div className={cn(
                                     "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-inner overflow-hidden",
-                                    getThemeColors(card.theme)
+                                    (card as any).logoUrl ? "bg-white p-1" : getThemeColors(card.theme)
                                 )}>
                                     {(card as any).logoUrl ? (
                                         <img
                                             src={(card as any).logoUrl}
                                             alt={card.name}
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-full object-contain"
                                             onError={(e) => {
                                                 (e.target as HTMLImageElement).style.display = 'none';
                                                 (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                                                // We can't easily revert parent class in React inline without state, 
+                                                // but for now the white bg for a fallback gray icon is acceptable or neutral.
                                             }}
                                         />
                                     ) : (
                                         <CreditCardIcon size={20} />
                                     )}
                                     {/* Fallback icon if image fails (hidden by default if image exists) */}
-                                    {(card as any).logoUrl && <CreditCardIcon size={20} className="hidden" />}
+                                    {(card as any).logoUrl && <CreditCardIcon size={20} className="hidden text-gray-400" />}
                                 </div>
 
                                 {/* Info */}
