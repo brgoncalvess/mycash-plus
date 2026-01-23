@@ -4,10 +4,12 @@ import { useFinance } from '../../context/FinanceContext';
 import { cn } from '../../utils/cn';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { NewTransactionModal } from './transactions/NewTransactionModal';
 
 export function DashboardHeader() {
     const { filters, setFilters, members } = useFinance();
     const [showFilters, setShowFilters] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchValue, setSearchValue] = useState(filters.searchQuery);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,7 +109,10 @@ export function DashboardHeader() {
 
                 {/* Right Group: New Transaction */}
                 <div className="flex items-center lg:ml-auto">
-                    <button className="flex items-center justify-center gap-2 h-12 px-8 bg-secondary text-surface rounded-full text-base font-bold hover:bg-secondary/90 transition-all shadow-md active:scale-95 group w-full lg:w-auto">
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="flex items-center justify-center gap-2 h-12 px-8 bg-secondary text-surface rounded-full text-base font-bold hover:bg-secondary/90 transition-all shadow-md active:scale-95 group w-full lg:w-auto"
+                    >
                         <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
                         <span>Nova transação</span>
                     </button>
@@ -153,6 +158,12 @@ export function DashboardHeader() {
                     </div>
                 </>
             )}
+
+            {/* Transaction Modal */}
+            <NewTransactionModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </div>
     );
 }
