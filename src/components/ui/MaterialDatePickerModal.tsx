@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Pencil } from 'lucide-react';
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, getDay } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import { cn } from '../../utils/cn';
 
 interface MaterialDatePickerModalProps {
@@ -46,46 +46,54 @@ export function MaterialDatePickerModal({ isOpen, onClose, onSelect, initialDate
         onClose();
     };
 
+    const handleClear = () => {
+        setSelectedDate(new Date());
+        setViewDate(new Date());
+    };
+
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
                 onClick={onClose}
             />
 
             {/* Modal Card */}
-            <div className="relative w-full max-w-[400px] bg-white rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col p-6">
+            <div className="relative w-[320px] bg-white rounded-[28px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col font-sans select-none">
 
                 {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[#fde047]/20 flex items-center justify-center text-[#d7ff00]"> {/* Lime tint */}
-                            <CalendarIcon size={20} className="text-[#a3e635]" /> {/* Icon color adjustment to match print lime vibe if needed, or stick tobrand */}
-                            {/* Actually print shows a yellow/lime icon bg. Let's use brand colors. */}
-                            {/* Re-visiting print: Icon is outline Calendar inside a Light Yellow circle. Title "Selecionar Periodo". */}
-                        </div>
-                        <h2 className="text-xl font-bold text-gray-900">Selecionar Data</h2>
+                <div className="px-6 pt-5 pb-3 bg-white">
+                    <span className="text-[12px] font-medium text-gray-600 tracking-wide block mb-0.5">Select date</span>
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-[32px] leading-tight font-normal text-gray-900">
+                            {format(selectedDate, 'EEE, MMM d', { locale: enUS })}
+                        </h2>
+                        <button className="text-gray-500 hover:text-black transition-colors rounded-full p-1 hover:bg-gray-50">
+                            <Pencil size={20} />
+                        </button>
                     </div>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-                        <X size={20} />
-                    </button>
                 </div>
 
                 {/* Calendar View */}
-                <div className="mb-6">
+                <div className="px-3 pb-2">
                     {/* Month Navigation */}
-                    <div className="flex items-center justify-between mb-4 px-2">
-                        <span className="text-base font-bold text-gray-900 capitalize">
-                            {format(viewDate, 'MMMM yyyy', { locale: ptBR })}
-                        </span>
-                        <div className="flex items-center gap-2">
-                            <button onClick={handlePrevMonth} className="text-blue-600 hover:bg-blue-50 p-1 rounded-full text-base font-bold">
+                    <div className="flex items-center justify-between py-2 px-1 mb-2">
+                        <div className="flex items-center gap-1 cursor-pointer hover:bg-gray-50 px-2 py-1 rounded-md transition-colors group">
+                            <span className="text-[14px] font-bold text-gray-800">
+                                {format(viewDate, 'MMMM yyyy', { locale: enUS })}
+                            </span>
+                            <svg className="w-2.5 h-2.5 text-gray-600 group-hover:text-black" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                        </div>
+                        <div className="flex items-center gap-2 pr-1">
+                            <button onClick={handlePrevMonth} className="text-gray-600 hover:text-black hover:bg-gray-100 rounded-full p-1.5 transition-colors">
                                 <ChevronLeft size={20} />
                             </button>
-                            <button onClick={handleNextMonth} className="text-blue-600 hover:bg-blue-50 p-1 rounded-full text-base font-bold">
+                            <button onClick={handleNextMonth} className="text-gray-600 hover:text-black hover:bg-gray-100 rounded-full p-1.5 transition-colors">
                                 <ChevronRight size={20} />
                             </button>
                         </div>
@@ -93,15 +101,15 @@ export function MaterialDatePickerModal({ isOpen, onClose, onSelect, initialDate
 
                     {/* Week Days */}
                     <div className="grid grid-cols-7 mb-2 text-center">
-                        {['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'].map(day => (
-                            <span key={day} className="text-xs text-gray-400 font-medium py-1 capitalize">
+                        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => (
+                            <span key={day} className="text-[12px] text-gray-500 font-medium py-1">
                                 {day}
                             </span>
                         ))}
                     </div>
 
                     {/* Days Grid */}
-                    <div className="grid grid-cols-7 gap-y-1 gap-x-1">
+                    <div className="grid grid-cols-7 gap-y-1">
                         {paddingDays.map((_, i) => (
                             <div key={`padding-${i}`} />
                         ))}
@@ -113,49 +121,46 @@ export function MaterialDatePickerModal({ isOpen, onClose, onSelect, initialDate
                                 <button
                                     key={date.toISOString()}
                                     onClick={() => handleDateClick(date)}
-                                    className={cn(
-                                        "w-9 h-9 mx-auto rounded-full flex items-center justify-center text-sm transition-all",
-                                        isSelected
-                                            ? "bg-blue-600 text-white font-bold shadow-md hover:bg-blue-700" // Blue selection as in print
-                                            : isCurrentDay
-                                                ? "text-blue-600 font-bold bg-blue-50"
-                                                : "text-gray-700 hover:bg-gray-100 font-medium"
-                                    )}
+                                    className="w-10 h-10 mx-auto flex items-center justify-center relative group"
                                 >
-                                    {format(date, 'd')}
+                                    <span className={cn(
+                                        "w-9 h-9 flex items-center justify-center text-[13px] rounded-full transition-all",
+                                        isSelected
+                                            ? "bg-[#D7FF00] text-gray-900 font-bold shadow-sm" // Lime selected
+                                            : isCurrentDay
+                                                ? "border border-[#8B5CF6] text-[#8B5CF6] font-bold" // Purple outline
+                                                : "text-gray-700 hover:bg-black/5 hover:text-black font-medium"
+                                    )}>
+                                        {format(date, 'd')}
+                                    </span>
                                 </button>
                             );
                         })}
                     </div>
                 </div>
 
-                {/* Selected Date Display */}
-                <div className="mb-6">
-                    <span className="text-xs font-medium text-gray-500 mb-2 block">Data selecionada:</span>
-                    <div className="w-full h-12 flex items-center justify-center border border-gray-200 rounded-xl bg-white">
-                        <span className="text-sm font-bold text-gray-900">
-                            {format(selectedDate, "dd 'de' MMM, yyyy", { locale: ptBR })}
-                        </span>
-                    </div>
-                </div>
-
                 {/* Footer Buttons */}
-                <div className="flex items-center justify-center gap-3">
+                <div className="px-3 pb-3 pt-2 flex items-center justify-between mt-1">
                     <button
-                        onClick={onClose}
-                        className="px-6 h-10 rounded-full border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors"
+                        onClick={handleClear}
+                        className="text-[14px] font-bold text-gray-800 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors"
                     >
-                        Cancelar
+                        Clear
                     </button>
-                    <button
-                        onClick={handleApply}
-                        className="px-8 h-10 rounded-full bg-[#0F172A] text-white text-sm font-bold hover:bg-black transition-colors flex items-center gap-2 shadow-lg"
-                    >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        Aplicar
-                    </button>
+                    <div className="flex items-center gap-0">
+                        <button
+                            onClick={onClose}
+                            className="text-[14px] font-bold text-gray-800 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleApply}
+                            className="text-[14px] font-bold text-gray-800 hover:bg-gray-50 px-4 py-2 rounded-lg transition-colors"
+                        >
+                            OK
+                        </button>
+                    </div>
                 </div>
 
             </div>
