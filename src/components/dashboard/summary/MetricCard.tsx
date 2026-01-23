@@ -11,10 +11,10 @@ export function MetricCard({ type, value }: MetricCardProps) {
     const isIncome = type === 'income';
 
     return (
-        <div className="relative w-full lg:flex-1 rounded-2xl bg-white border border-secondary-50 p-6 shadow-sm h-[152px] flex items-center gap-4 group hover:border-secondary-500/10 transition-all">
+        <div className="relative w-full lg:flex-1 rounded-2xl bg-white border border-secondary-50 p-6 shadow-sm h-[152px] flex flex-col items-center justify-center gap-2 group hover:border-secondary-500/10 transition-all">
             {/* Icon */}
             <div className={cn(
-                "flex items-center justify-center w-12 h-12 rounded-full shrink-0",
+                "flex items-center justify-center w-12 h-12 rounded-full",
                 isIncome ? "bg-green-50" : "bg-red-50"
             )}>
                 {isIncome ? (
@@ -25,7 +25,7 @@ export function MetricCard({ type, value }: MetricCardProps) {
             </div>
 
             {/* Content */}
-            <div className="flex flex-col gap-1 flex-1 min-w-0">
+            <div className="flex flex-col items-center gap-1">
                 <span className="text-sm font-normal text-secondary">
                     {isIncome ? 'Receitas' : 'Despesas'}
                 </span>
