@@ -81,10 +81,24 @@ export function CreditCardsWidget() {
                             >
                                 {/* Icon Block */}
                                 <div className={cn(
-                                    "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-inner",
+                                    "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-inner overflow-hidden",
                                     getThemeColors(card.theme)
                                 )}>
-                                    <CreditCardIcon size={20} />
+                                    {(card as any).logoUrl ? (
+                                        <img
+                                            src={(card as any).logoUrl}
+                                            alt={card.name}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).style.display = 'none';
+                                                (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                                            }}
+                                        />
+                                    ) : (
+                                        <CreditCardIcon size={20} />
+                                    )}
+                                    {/* Fallback icon if image fails (hidden by default if image exists) */}
+                                    {(card as any).logoUrl && <CreditCardIcon size={20} className="hidden" />}
                                 </div>
 
                                 {/* Info */}

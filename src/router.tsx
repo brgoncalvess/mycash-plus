@@ -15,31 +15,30 @@ const Dashboard = () => (
         {/* Header with Controls */}
         <DashboardHeader />
 
-        {/* Top Section: Categories & Summary (Left) + Credit Cards (Right) */}
+        {/* Main Grid: Left Content (2/3) + Right Sidebar (1/3) */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            {/* Left Column: Categories + Summary */}
+
+            {/* LEFT COLUMN: Main content area */}
             <div className="xl:col-span-2 flex flex-col gap-6">
+                {/* 1. Categories */}
                 <ExpensesByCategoryCarousel />
+
+                {/* 2. Summary Cards */}
                 <SummarySection />
-            </div>
 
-            {/* Right Column: Cards & Accounts */}
-            <div className="xl:col-span-1 flex flex-col gap-6">
-                <CreditCardsWidget />
-            </div>
-        </div>
+                {/* 3. Financial Flow Chart */}
+                <FinancialFlowChart />
 
-        {/* Middle Section: Charts */}
-        <div className="w-full">
-            <FinancialFlowChart />
-        </div>
-
-        {/* Bottom Section: Transactions & Upcoming */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div className="xl:col-span-2">
+                {/* 4. Transactions Table */}
                 <TransactionsTable />
             </div>
-            <div className="xl:col-span-1">
+
+            {/* RIGHT COLUMN: Sidebar widgets */}
+            <div className="xl:col-span-1 flex flex-col gap-6">
+                {/* 1. Cards (Top Right) */}
+                <CreditCardsWidget />
+
+                {/* 2. Upcoming Expenses (Below Cards, roughly next to Chart/Table) */}
                 <UpcomingExpensesWidget />
             </div>
         </div>

@@ -41,7 +41,8 @@ export const MOCK_CARDS: CreditCard[] = [
         limit: 20000,
         currentInvoice: 4500.20,
         theme: 'black',
-        last4Digits: '8834'
+        last4Digits: '8834',
+        logoUrl: 'https://logo.clearbit.com/nubank.com.br'
     },
     {
         id: 'cd2',
@@ -51,7 +52,8 @@ export const MOCK_CARDS: CreditCard[] = [
         limit: 50000,
         currentInvoice: 1250.00,
         theme: 'black', // Using black theme for premium feel
-        last4Digits: '1290'
+        last4Digits: '1290',
+        logoUrl: 'https://logo.clearbit.com/xpi.com.br'
     },
     {
         id: 'cd3',
@@ -61,7 +63,8 @@ export const MOCK_CARDS: CreditCard[] = [
         limit: 15000,
         currentInvoice: 890.90,
         theme: 'white', // Changed to white for variety
-        last4Digits: '9921'
+        last4Digits: '9921',
+        logoUrl: 'https://logo.clearbit.com/bancointer.com.br'
     }
 ];
 
