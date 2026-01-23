@@ -122,7 +122,7 @@ export function FinancialFlowChart() {
             </div>
 
             {/* Chart */}
-            <div className="flex-1 w-full min-h-0">
+            <div className="flex-1 w-full min-h-[350px]">
                 {Array.isArray(chartData) && chartData.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart
