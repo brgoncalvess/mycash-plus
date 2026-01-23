@@ -11,9 +11,13 @@ import { format, parseISO } from 'date-fns';
 import { useFinance } from '../../../context/FinanceContext';
 import { cn } from '../../../utils/cn';
 
-const ITEMS_PER_PAGE = 5;
+interface TransactionsTableProps {
+    data?: any[]; // Allow external data override
+    itemsPerPage?: number;
+    hideHeader?: boolean;
+}
 
-export function TransactionsTable() {
+export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }: TransactionsTableProps) {
     const {
         getFilteredTransactions,
         accounts,
@@ -21,41 +25,68 @@ export function TransactionsTable() {
         members
     } = useFinance();
 
-    // Local Filters State
+    // Local Filters State (only used if data is not provided)
     const [searchQuery, setSearchQuery] = useState('');
     const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>('all');
     const [currentPage, setCurrentPage] = useState(1);
+    const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
 
-    // Get Base Filtered Data from Context (Global Filters applied)
-    const contextTransactions = getFilteredTransactions();
+    // Get Data: either passed prop or from context with local widget filters
+    const baseData = data || getFilteredTransactions();
 
-    // Apply Local Filters
-    const filteredData = useMemo(() => {
-        return contextTransactions.filter(transaction => {
-            // Type Filter
-            if (typeFilter !== 'all' && transaction.type !== typeFilter) {
-                return false;
-            }
+    // Apply Local Widget Filters (ONLY if no external data provided - otherwise assume parent filtered it)
+    // Actually, if data is provided, we assume it's already filtered by the parent view.
+    // If NO data provided (Dashboard Widget mode), we apply the widget's simple filters.
 
-            // Search Filter
-            if (searchQuery) {
-                const query = searchQuery.toLowerCase();
-                return (
-                    transaction.description.toLowerCase().includes(query) ||
-                    transaction.category.toLowerCase().includes(query)
-                );
-            }
+    const processedData = useMemo(() => {
+        let result = [...baseData];
 
-            return true;
-        }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    }, [contextTransactions, searchQuery, typeFilter]);
+        // Apply Widget Filters only if functioning as independent widget
+        if (!data) {
+            result = result.filter(transaction => {
+                if (typeFilter !== 'all' && transaction.type !== typeFilter) return false;
+                if (searchQuery) {
+                    const query = searchQuery.toLowerCase();
+                    return (
+                        transaction.description.toLowerCase().includes(query) ||
+                        transaction.category.toLowerCase().includes(query)
+                    );
+                }
+                return true;
+            });
+        }
+
+        // Apply Sorting
+        if (sortConfig) {
+            result.sort((a, b) => {
+                if (a[sortConfig.key] < b[sortConfig.key]) return sortConfig.direction === 'asc' ? -1 : 1;
+                if (a[sortConfig.key] > b[sortConfig.key]) return sortConfig.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        } else if (!data) {
+            // Default sort for widget (Date Desc)
+            result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        }
+        // If data is provided by View, it might already be sorted, but adding click sorting is good.
+
+        return result;
+    }, [baseData, data, searchQuery, typeFilter, sortConfig]);
 
     // Pagination Logic
-    const totalItems = filteredData.length;
-    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
-    const paginatedData = filteredData.slice(startIndex, endIndex);
+    const totalItems = processedData.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+    const paginatedData = processedData.slice(startIndex, endIndex);
+
+    const handleSort = (key: string) => {
+        setSortConfig(current => {
+            if (current?.key === key) {
+                return { key, direction: current.direction === 'asc' ? 'desc' : 'asc' };
+            }
+            return { key, direction: 'desc' }; // Default diff key to desc
+        });
+    };
 
     // Helpers
     const getAccountOrCardName = (id: string) => {
@@ -137,38 +168,40 @@ export function TransactionsTable() {
     };
 
     return (
-        <section className="bg-surface border border-secondary-50 rounded-2xl p-6 flex flex-col gap-6">
-            {/* Header with Controls */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <h2 className="text-xl font-bold text-secondary">
-                    Extrato Detalhado
-                </h2>
+        <section className={cn("bg-surface rounded-2xl flex flex-col gap-6", hideHeader ? "" : "border border-secondary-50 p-6")}>
+            {/* Header with Controls - Only show if functioning as independent widget */}
+            {!hideHeader && (
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <h2 className="text-xl font-bold text-secondary">
+                        Extrato Detalhado
+                    </h2>
 
-                <div className="flex flex-col sm:flex-row items-stretch gap-3 w-full md:w-auto">
-                    {/* Search */}
-                    <div className="relative w-full sm:w-64">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                        <input
-                            type="text"
-                            placeholder="Buscar lançamentos..."
-                            value={searchQuery}
-                            onChange={(e) => handleFilterChange('search', e.target.value)}
-                            className="w-full h-10 pl-9 pr-4 rounded-lg border border-secondary-50 bg-background text-sm focus:outline-none focus:ring-1 focus:ring-brand/20 transition-all"
-                        />
+                    <div className="flex flex-col sm:flex-row items-stretch gap-3 w-full md:w-auto">
+                        {/* Search */}
+                        <div className="relative w-full sm:w-64">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                            <input
+                                type="text"
+                                placeholder="Buscar lançamentos..."
+                                value={searchQuery}
+                                onChange={(e) => handleFilterChange('search', e.target.value)}
+                                className="w-full h-10 pl-9 pr-4 rounded-lg border border-secondary-50 bg-background text-sm focus:outline-none focus:ring-1 focus:ring-brand/20 transition-all"
+                            />
+                        </div>
+
+                        {/* Filter Select */}
+                        <select
+                            value={typeFilter}
+                            onChange={(e) => handleFilterChange('type', e.target.value)}
+                            className="w-full sm:w-[140px] h-10 px-3 rounded-lg border border-secondary-50 bg-background text-sm focus:outline-none focus:ring-1 focus:ring-brand/20 transition-all cursor-pointer"
+                        >
+                            <option value="all">Todos</option>
+                            <option value="income">Receitas</option>
+                            <option value="expense">Despesas</option>
+                        </select>
                     </div>
-
-                    {/* Filter Select */}
-                    <select
-                        value={typeFilter}
-                        onChange={(e) => handleFilterChange('type', e.target.value)}
-                        className="w-full sm:w-[140px] h-10 px-3 rounded-lg border border-secondary-50 bg-background text-sm focus:outline-none focus:ring-1 focus:ring-brand/20 transition-all cursor-pointer"
-                    >
-                        <option value="all">Todos</option>
-                        <option value="income">Receitas</option>
-                        <option value="expense">Despesas</option>
-                    </select>
                 </div>
-            </div>
+            )}
 
             {/* Table */}
             <div className="border border-secondary-50 rounded-xl overflow-hidden bg-white">
@@ -177,12 +210,32 @@ export function TransactionsTable() {
                         <thead>
                             <tr className="bg-gray-50 text-left border-b border-secondary-50">
                                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 w-[50px]">Membro</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500">Datas</th>
+                                <th
+                                    className="px-6 py-4 text-xs font-semibold text-gray-500 cursor-pointer hover:text-secondary transition-colors select-none group"
+                                    onClick={() => handleSort('date')}
+                                >
+                                    <div className="flex items-center gap-1">
+                                        Datas
+                                        {sortConfig?.key === 'date' && (
+                                            <span className="text-brand text-[10px]">{sortConfig.direction === 'asc' ? '▲' : '▼'}</span>
+                                        )}
+                                    </div>
+                                </th>
                                 <th className="px-6 py-4 text-xs font-semibold text-gray-500">Descrição</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-gray-500">Categorias</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-gray-500">Conta/cartão</th>
                                 <th className="px-6 py-4 text-xs font-semibold text-gray-500">Parcelas</th>
-                                <th className="px-6 py-4 text-xs font-semibold text-gray-500 text-right">Valor</th>
+                                <th
+                                    className="px-6 py-4 text-xs font-semibold text-gray-500 text-right cursor-pointer hover:text-secondary transition-colors select-none"
+                                    onClick={() => handleSort('amount')}
+                                >
+                                    <div className="flex items-center justify-end gap-1">
+                                        Valor
+                                        {sortConfig?.key === 'amount' && (
+                                            <span className="text-brand text-[10px]">{sortConfig.direction === 'asc' ? '▲' : '▼'}</span>
+                                        )}
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
