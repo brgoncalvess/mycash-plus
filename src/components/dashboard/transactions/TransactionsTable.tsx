@@ -186,7 +186,77 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                 </div>
             )}
 
-            <div className="border border-secondary-50 rounded-xl overflow-hidden bg-white">
+            {/* Mobile List View - Visible on < md */}
+            <div className="md:hidden flex flex-col gap-3">
+                {paginatedData.length === 0 ? (
+                    <div className="p-8 text-center text-gray-400 bg-white rounded-xl border border-dashed border-gray-200">
+                        Nenhum lançamento encontrado.
+                    </div>
+                ) : (
+                    <div className="flex flex-col gap-3">
+                        {paginatedData.map((transaction, index) => {
+                            const member = getMember(transaction.memberId);
+                            const isIncome = transaction.type === 'income';
+                            return (
+                                <motion.div
+                                    key={transaction.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                                    className="bg-white p-4 rounded-2xl border border-secondary-50 shadow-sm flex flex-col gap-3 active:scale-[0.98] transition-transform"
+                                >
+                                    <div className="flex items-center justify-between">
+                                        {/* Date & Member */}
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-bold text-gray-400">
+                                                {format(parseISO(transaction.date), 'dd MMM', { locale: (window as any).dateFnsLocalePtBr })}
+                                            </span>
+                                            <div className="w-1 h-1 rounded-full bg-gray-300" />
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-4 h-4 rounded-full bg-gray-100 overflow-hidden">
+                                                    {member?.avatarUrl ? <img src={member.avatarUrl} className="w-full h-full object-cover" /> : <User size={10} className="text-gray-400 m-auto" />}
+                                                </div>
+                                                <span className="text-xs text-gray-500">{member?.name}</span>
+                                            </div>
+                                        </div>
+                                        {/* Amount */}
+                                        <span className={cn("text-base font-bold", isIncome ? "text-green-600" : "text-secondary")}>
+                                            {isIncome ? '+' : '-'} {transaction.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                        </span>
+                                    </div>
+
+                                    {/* Main Info */}
+                                    <div className="flex items-center gap-3">
+                                        <div className={cn(
+                                            "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
+                                            isIncome ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+                                        )}>
+                                            {isIncome ? <ArrowDownLeft size={18} /> : <ArrowUpRight size={18} />}
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-secondary text-sm">{transaction.description}</span>
+                                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                <span className="bg-gray-100 px-2 py-0.5 rounded-md">{transaction.category}</span>
+                                                <span>•</span>
+                                                <span>{getAccountOrCardName(transaction.accountId)}</span>
+                                                {transaction.installments && transaction.installments > 1 && (
+                                                    <>
+                                                        <span>•</span>
+                                                        <span>{transaction.installments}x</span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+
+            {/* Desktop Table View - Hidden on < md */}
+            <div className="hidden md:block border border-secondary-50 rounded-xl overflow-hidden bg-white">
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[800px]">
                         <thead>

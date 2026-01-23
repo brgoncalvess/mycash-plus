@@ -31,7 +31,7 @@ export function MobileHeader() {
 
     return (
         <>
-            <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-surface border-b border-secondary-50 z-40 px-4 flex items-center justify-between">
+            <header className="xl:hidden fixed top-0 left-0 right-0 h-16 bg-surface border-b border-secondary-50 z-40 px-4 flex items-center justify-between">
                 {/* Brand */}
                 <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center">
