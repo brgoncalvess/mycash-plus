@@ -1,5 +1,7 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Outlet, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
+import { PageTransition } from './components/ui/PageTransition';
 import { SummarySection } from './components/dashboard/summary/SummarySection';
 import { DashboardHeader } from './components/dashboard/DashboardHeader';
 import { ExpensesByCategoryCarousel } from './components/dashboard/categories/ExpensesByCategoryCarousel';
@@ -53,6 +55,7 @@ const Goals = () => <div className="p-4"></div>;
 // Layout Component
 function Layout() {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const location = useLocation();
 
     return (
         <div className="flex h-screen overflow-hidden bg-background">
@@ -71,7 +74,11 @@ function Layout() {
                     }`}
             >
                 <div className="w-full px-4 sm:px-6 lg:px-8 py-6 max-w-[1600px] mx-auto">
-                    <Outlet />
+                    <AnimatePresence mode="wait">
+                        <PageTransition key={location.pathname}>
+                            <Outlet />
+                        </PageTransition>
+                    </AnimatePresence>
                 </div>
             </main>
         </div>

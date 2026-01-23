@@ -8,6 +8,7 @@ import {
     User
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
+import { motion } from 'framer-motion';
 import { useFinance } from '../../../context/FinanceContext';
 import { cn } from '../../../utils/cn';
 
@@ -35,9 +36,6 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
     const baseData = data || getFilteredTransactions();
 
     // Apply Local Widget Filters (ONLY if no external data provided - otherwise assume parent filtered it)
-    // Actually, if data is provided, we assume it's already filtered by the parent view.
-    // If NO data provided (Dashboard Widget mode), we apply the widget's simple filters.
-
     const processedData = useMemo(() => {
         let result = [...baseData];
 
@@ -67,7 +65,6 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
             // Default sort for widget (Date Desc)
             result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         }
-        // If data is provided by View, it might already be sorted, but adding click sorting is good.
 
         return result;
     }, [baseData, data, searchQuery, typeFilter, sortConfig]);
@@ -106,10 +103,8 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
 
     const handlePageChange = (page: number) => {
         setCurrentPage(page);
-        // Smooth scroll to table top if needed, typically handled by layout or manually here
     };
 
-    // Reset page on filter change
     const handleFilterChange = (
         type: 'search' | 'type',
         value: string
@@ -119,7 +114,6 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
         setCurrentPage(1);
     };
 
-    // Pagination Render Helper
     const renderPaginationNumbers = () => {
         const pages = [];
 
@@ -128,22 +122,14 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                 pages.push(i);
             }
         } else {
-            // Always show 1
             pages.push(1);
-
             if (currentPage > 3) pages.push('...');
-
-            // Show current and neighbors
             const start = Math.max(2, currentPage - 1);
             const end = Math.min(totalPages - 1, currentPage + 1);
-
             for (let i = start; i <= end; i++) {
                 pages.push(i);
             }
-
             if (currentPage < totalPages - 2) pages.push('...');
-
-            // Always show last
             pages.push(totalPages);
         }
 
@@ -169,7 +155,6 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
 
     return (
         <section className={cn("bg-surface rounded-2xl flex flex-col gap-6", hideHeader ? "" : "border border-secondary-50 p-6")}>
-            {/* Header with Controls - Only show if functioning as independent widget */}
             {!hideHeader && (
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <h2 className="text-xl font-bold text-secondary">
@@ -177,7 +162,6 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                     </h2>
 
                     <div className="flex flex-col sm:flex-row items-stretch gap-3 w-full md:w-auto">
-                        {/* Search */}
                         <div className="relative w-full sm:w-64">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                             <input
@@ -189,7 +173,6 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                             />
                         </div>
 
-                        {/* Filter Select */}
                         <select
                             value={typeFilter}
                             onChange={(e) => handleFilterChange('type', e.target.value)}
@@ -203,7 +186,6 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                 </div>
             )}
 
-            {/* Table */}
             <div className="border border-secondary-50 rounded-xl overflow-hidden bg-white">
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[800px]">
@@ -238,7 +220,13 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                 </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <motion.tbody
+                            initial="hidden"
+                            animate="visible"
+                            variants={{
+                                visible: { transition: { staggerChildren: 0.05 } }
+                            }}
+                        >
                             {paginatedData.length === 0 ? (
                                 <tr>
                                     <td colSpan={7} className="px-6 py-12 text-center text-gray-500 text-sm">
@@ -252,15 +240,18 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                     const isEven = index % 2 === 0;
 
                                     return (
-                                        <tr
+                                        <motion.tr
                                             key={transaction.id}
+                                            variants={{
+                                                hidden: { opacity: 0, y: 20 },
+                                                visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } }
+                                            }}
                                             className={cn(
                                                 "group transition-colors border-b border-gray-100 last:border-0",
                                                 isEven ? "bg-white" : "bg-gray-50/30",
                                                 "hover:bg-gray-100/80"
                                             )}
                                         >
-                                            {/* Avatar */}
                                             <td className="px-6 py-4">
                                                 <div className="w-6 h-6 rounded-full overflow-hidden bg-gray-200" title={member?.name || 'Usuário'}>
                                                     {member?.avatarUrl ? (
@@ -273,14 +264,12 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                                 </div>
                                             </td>
 
-                                            {/* Date */}
                                             <td className="px-6 py-4">
                                                 <span className="text-sm text-gray-500">
                                                     {format(parseISO(transaction.date), 'dd/MM/yyyy')}
                                                 </span>
                                             </td>
 
-                                            {/* Description with Icon */}
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className={cn(
@@ -299,21 +288,18 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                                 </div>
                                             </td>
 
-                                            {/* Category */}
                                             <td className="px-6 py-4">
                                                 <span className="inline-flex px-2.5 py-0.5 rounded-full bg-gray-100 text-xs font-medium text-gray-600 border border-gray-200">
                                                     {transaction.category}
                                                 </span>
                                             </td>
 
-                                            {/* Account */}
                                             <td className="px-6 py-4">
                                                 <span className="text-sm text-gray-500">
                                                     {getAccountOrCardName(transaction.accountId)}
                                                 </span>
                                             </td>
 
-                                            {/* Installments */}
                                             <td className="px-6 py-4">
                                                 <span className="text-sm text-gray-500">
                                                     {transaction.installments && transaction.installments > 1
@@ -322,7 +308,6 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                                 </span>
                                             </td>
 
-                                            {/* Amount */}
                                             <td className="px-6 py-4 text-right">
                                                 <span className={cn(
                                                     "text-sm font-bold",
@@ -331,16 +316,15 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                                     {isIncome ? '+' : '-'} {transaction.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }).replace('R$', '').trim()}
                                                 </span>
                                             </td>
-                                        </tr>
+                                        </motion.tr>
                                     );
                                 })
                             )}
-                        </tbody>
+                        </motion.tbody>
                     </table>
                 </div>
             </div>
 
-            {/* Pagination Footer */}
             {totalItems > 0 && (
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
                     <p className="text-sm text-gray-500">
