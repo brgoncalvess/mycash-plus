@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useFinance } from '../../../context/FinanceContext';
 import { CategoryDonutCard } from './CategoryDonutCard';
@@ -33,9 +33,9 @@ export function ExpensesByCategoryCarousel() {
     };
 
     // Check on mount and when data changes
-    useState(() => {
+    useEffect(() => {
         checkScroll();
-    });
+    }, [expensesByCategory]);
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollContainerRef.current) {
