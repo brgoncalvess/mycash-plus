@@ -39,7 +39,11 @@ const MOCK_UPCOMING = [
     }
 ];
 
-export function UpcomingExpensesWidget() {
+interface UpcomingExpensesWidgetProps {
+    onAddExpense?: () => void;
+}
+
+export function UpcomingExpensesWidget({ onAddExpense }: UpcomingExpensesWidgetProps) {
     const [expenses, setExpenses] = useState(MOCK_UPCOMING);
 
     const handlePay = (id: string) => {
@@ -64,6 +68,7 @@ export function UpcomingExpensesWidget() {
                     Próximas despesas
                 </h2>
                 <button
+                    onClick={onAddExpense}
                     className="w-10 h-10 flex items-center justify-center rounded-full border border-secondary-50 hover:bg-gray-50 transition-colors text-secondary"
                     title="Adicionar despesa"
                 >

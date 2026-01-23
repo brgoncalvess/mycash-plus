@@ -161,7 +161,7 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                         Extrato Detalhado
                     </h2>
 
-                    <div className="flex flex-col sm:flex-row items-stretch gap-3 w-full md:w-auto">
+                    <div className="flex flex-row items-center gap-3 w-full md:w-auto">
                         <div className="relative w-full sm:w-64">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                             <input

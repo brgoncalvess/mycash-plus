@@ -8,6 +8,7 @@ import {
     ChevronLeft,
     ChevronRight,
 } from 'lucide-react';
+import { useFinance } from '../../context/FinanceContext';
 import { cn } from '../../utils/cn';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -33,6 +34,9 @@ interface SidebarProps {
 export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
     const navigate = useNavigate();
     const location = useLocation();
+
+    const { members } = useFinance();
+    const user = members[0]; // Active user
 
     // Check active path logic
     const isActive = (path: string) => {
@@ -102,18 +106,24 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
                     "flex items-center gap-3 overflow-hidden",
                     isCollapsed ? "justify-center" : ""
                 )}>
-                    <img
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt="User"
-                        className="w-10 h-10 rounded-full flex-shrink-0"
-                    />
-                    <div className={cn(
-                        "flex-col transition-all duration-300 overflow-hidden whitespace-nowrap",
-                        isCollapsed ? "opacity-0 w-0 hidden" : "flex opacity-100"
-                    )}>
-                        <span className="text-sm font-semibold text-secondary">Lucas Marte</span>
-                        <span className="text-xs text-gray-500">lucasmarte@gmail.com</span>
-                    </div>
+                    {user ? (
+                        <>
+                            <img
+                                src={user.avatarUrl || `https://i.pravatar.cc/150?u=${user.id}`}
+                                alt={user.name}
+                                className="w-10 h-10 rounded-full flex-shrink-0 object-cover"
+                            />
+                            <div className={cn(
+                                "flex-col transition-all duration-300 overflow-hidden whitespace-nowrap",
+                                isCollapsed ? "opacity-0 w-0 hidden" : "flex opacity-100"
+                            )}>
+                                <span className="text-sm font-semibold text-secondary">{user.name}</span>
+                                <span className="text-xs text-gray-500">{user.role}</span>
+                            </div>
+                        </>
+                    ) : (
+                        <div className="w-10 h-10 bg-gray-200 rounded-full" />
+                    )}
                 </div>
             </div>
 

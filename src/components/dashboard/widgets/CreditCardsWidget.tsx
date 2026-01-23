@@ -6,7 +6,11 @@ import type { CreditCard } from '../../../types';
 
 import { CardDetailsModal } from '../cards/CardDetailsModal';
 
-export function CreditCardsWidget() {
+interface CreditCardsWidgetProps {
+    onAddCard?: () => void;
+}
+
+export function CreditCardsWidget({ onAddCard }: CreditCardsWidgetProps) {
     const { cards } = useFinance();
     const [currentPage, setCurrentPage] = useState(0);
     const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
@@ -55,6 +59,7 @@ export function CreditCardsWidget() {
                     Cartões
                 </h2>
                 <button
+                    onClick={onAddCard}
                     className="w-8 h-8 flex items-center justify-center rounded-full bg-surface shadow-sm text-secondary hover:bg-gray-100 transition-colors"
                     title="Adicionar cartão"
                 >

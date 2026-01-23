@@ -1,21 +1,20 @@
-import { Search, SlidersHorizontal, Plus, Calendar } from 'lucide-react';
+import { Search, SlidersHorizontal, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 import { useFinance } from '../../context/FinanceContext';
 import { cn } from '../../utils/cn';
-import { format } from 'date-fns';
+import { format, addMonths, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { NewTransactionModal } from './transactions/NewTransactionModal';
-import { AddMemberModal } from './members/AddMemberModal';
-import { AddCardModal } from './members/AddCardModal';
 import { FiltersMobileModal } from './filters/FiltersMobileModal';
 
-export function DashboardHeader() {
+interface DashboardHeaderProps {
+    onNewTransaction: () => void;
+    onAddMember: () => void;
+}
+
+export function DashboardHeader({ onNewTransaction, onAddMember }: DashboardHeaderProps) {
     const { filters, setFilters, members } = useFinance();
     const [showFilters, setShowFilters] = useState(false);
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
-    const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
-    const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
-    const [isCardModalOpen, setIsCardModalOpen] = useState(false);
     const [searchValue, setSearchValue] = useState(filters.searchQuery);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,10 +36,35 @@ export function DashboardHeader() {
         }
     };
 
-    const dateRangeText = `${format(filters.dateRange.start, 'dd MMM', { locale: ptBR })} - ${format(filters.dateRange.end, 'dd MMM yyyy', { locale: ptBR })}`;
+    // Date Navigation helpers
+    const currentMonth = filters.dateRange.start;
+
+    const nextMonth = () => {
+        const next = addMonths(currentMonth, 1);
+        setFilters({
+            dateRange: {
+                start: startOfMonth(next),
+                end: endOfMonth(next)
+            }
+        });
+    };
+
+    const prevMonth = () => {
+        const prev = subMonths(currentMonth, 1);
+        setFilters({
+            dateRange: {
+                start: startOfMonth(prev),
+                end: endOfMonth(prev)
+            }
+        });
+    };
+
+    const dateLabel = format(currentMonth, 'MMMM yyyy', { locale: ptBR });
+    // Capitalize first letter
+    const formattedDateLabel = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
 
     return (
-        <div className="relative w-full">
+        <div className="relative w-full z-30">
             <header className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center w-full bg-surface/50 backdrop-blur-sm p-1 rounded-full border border-transparent">
                 {/* Left Group: Search, Filter, Date, Members */}
                 <div className="flex flex-wrap items-center gap-2 flex-1">
@@ -75,11 +99,24 @@ export function DashboardHeader() {
                         <SlidersHorizontal size={18} />
                     </button>
 
-                    {/* Date Range Button */}
-                    <button className="flex items-center gap-3 h-12 px-6 bg-surface border border-secondary-50 rounded-full text-sm text-secondary hover:border-brand/30 hover:bg-background transition-all whitespace-nowrap shadow-sm">
-                        <Calendar size={18} className="text-gray-400" />
-                        <span className="font-medium text-secondary">{dateRangeText}</span>
-                    </button>
+                    {/* Date Navigation (Simple Month Picker) */}
+                    <div className="flex items-center bg-surface border border-secondary-50 rounded-full shadow-sm h-12 px-2">
+                        <button
+                            onClick={prevMonth}
+                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+                        >
+                            <ChevronLeft size={16} />
+                        </button>
+                        <span className="px-3 text-sm font-bold text-secondary min-w-[120px] text-center select-none">
+                            {formattedDateLabel}
+                        </span>
+                        <button
+                            onClick={nextMonth}
+                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+                        >
+                            <ChevronRight size={16} />
+                        </button>
+                    </div>
 
                     {/* Family Members Stack */}
                     <div className="flex items-center -space-x-3 ml-2">
@@ -114,7 +151,7 @@ export function DashboardHeader() {
                         })}
 
                         <button
-                            onClick={() => setIsMemberModalOpen(true)}
+                            onClick={onAddMember}
                             className="w-11 h-11 rounded-full bg-gray-100 border-2 border-surface flex items-center justify-center hover:bg-gray-200 transition-all text-secondary z-0"
                         >
                             <Plus size={20} />
@@ -125,7 +162,7 @@ export function DashboardHeader() {
                 {/* Right Group: New Transaction */}
                 <div className="flex items-center lg:ml-auto">
                     <button
-                        onClick={() => setIsTransactionModalOpen(true)}
+                        onClick={onNewTransaction}
                         className="flex items-center justify-center gap-2 h-12 px-8 bg-secondary text-surface rounded-full text-base font-bold hover:bg-secondary/90 transition-all shadow-md active:scale-95 group w-full lg:w-auto"
                     >
                         <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
@@ -173,24 +210,6 @@ export function DashboardHeader() {
                     </div>
                 </>
             )}
-
-            {/* Transaction Modal */}
-            <NewTransactionModal
-                isOpen={isTransactionModalOpen}
-                onClose={() => setIsTransactionModalOpen(false)}
-            />
-
-            {/* Member Modal */}
-            <AddMemberModal
-                isOpen={isMemberModalOpen}
-                onClose={() => setIsMemberModalOpen(false)}
-            />
-
-            {/* Card Modal */}
-            <AddCardModal
-                isOpen={isCardModalOpen}
-                onClose={() => setIsCardModalOpen(false)}
-            />
 
             {/* Mobile Filters Modal */}
             <FiltersMobileModal
