@@ -23,7 +23,7 @@ export function ExpensesByCategoryCarousel() {
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollContainerRef.current) {
-            const scrollAmount = 203;
+            const scrollAmount = 170; // 152px card + 18px gap
             scrollContainerRef.current.scrollBy({
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
                 behavior: 'smooth',
@@ -68,7 +68,7 @@ export function ExpensesByCategoryCarousel() {
             <div
                 ref={scrollContainerRef}
                 onWheel={handleWheel}
-                className="flex gap-[18px] overflow-x-auto scrollbar-hide scroll-smooth pb-2"
+                className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-2"
                 style={{
                     maskImage: 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)',
                     WebkitMaskImage: 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)',

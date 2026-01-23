@@ -24,10 +24,15 @@ export function FinancialFlowChart() {
 
         const monthsInterval = eachMonthOfInterval({ start, end });
 
-        return monthsInterval.map(monthDate => {
+        const data = monthsInterval.map(monthDate => {
             const monthTransactions = transactions.filter(t => {
-                const tDate = parseISO(t.date);
-                return isSameMonth(tDate, monthDate);
+                try {
+                    const tDate = parseISO(t.date);
+                    return isSameMonth(tDate, monthDate);
+                } catch (error) {
+                    console.error('Error parsing date:', t.date, error);
+                    return false;
+                }
             });
 
             const income = monthTransactions
@@ -45,6 +50,11 @@ export function FinancialFlowChart() {
                 originalDate: monthDate // for sorting/key if needed
             };
         });
+
+        console.log('Financial Flow Chart Data:', data);
+        console.log('Total transactions:', transactions.length);
+
+        return data;
     }, [transactions]);
 
     const formatCurrency = (value: number) => {

@@ -9,21 +9,21 @@ interface CategoryDonutCardProps {
 
 export function CategoryDonutCard({ category, amount, percentage, color }: CategoryDonutCardProps) {
     return (
-        <div className="flex-shrink-0 w-[185px] h-[184px] bg-surface border border-secondary-50 rounded-[20px] p-6 flex flex-col items-center justify-center gap-3 hover:border-brand transition-all group">
+        <div className="flex-shrink-0 w-[152px] h-[152px] bg-white border border-secondary-50 rounded-[20px] p-4 flex flex-col items-center justify-between hover:border-brand transition-all group">
             {/* Donut Chart */}
-            <div className="flex justify-center">
-                <DonutChart percentage={percentage} color={color} size={72} />
+            <div className="flex justify-center mt-1">
+                <DonutChart percentage={percentage} color={color} size={64} />
             </div>
 
             {/* Content Group */}
-            <div className="flex flex-col items-center gap-1 w-full">
+            <div className="flex flex-col items-center gap-0.5 w-full">
                 {/* Category Name */}
-                <p className="text-[14px] leading-[20px] font-normal text-secondary text-center truncate w-full tracking-[0.3px]" title={category}>
+                <p className="text-xs leading-tight font-normal text-secondary text-center truncate w-full" title={category}>
                     {category}
                 </p>
 
                 {/* Amount */}
-                <p className="text-[20px] leading-[28px] font-bold text-secondary text-center truncate w-full">
+                <p className="text-base leading-tight font-bold text-secondary text-center truncate w-full">
                     {amount.toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL',
