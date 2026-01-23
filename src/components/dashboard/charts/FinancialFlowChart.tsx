@@ -82,12 +82,12 @@ export function FinancialFlowChart() {
     };
 
     return (
-        <section className="bg-white rounded-3xl p-6 md:p-8 flex flex-col h-[400px] shadow-sm border border-secondary-50">
+        <section className="bg-white rounded-[32px] p-8 flex flex-col h-full min-h-[500px] shadow-sm border border-secondary-50">
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-2">
-                    <BarChart3 size={20} className="text-secondary" />
-                    <h2 className="text-lg font-bold text-secondary">Fluxo financeiro</h2>
+                    <BarChart3 size={24} className="text-secondary" />
+                    <h2 className="text-xl font-bold text-secondary">Fluxo financeiro</h2>
                 </div>
 
                 {/* Legend */}
