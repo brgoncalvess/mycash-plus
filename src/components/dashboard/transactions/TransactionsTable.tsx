@@ -115,20 +115,20 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
             <div className="overflow-x-auto">
                 <table className="w-full min-w-[1000px]">
                     <thead>
-                        <tr className="text-left">
-                            <th className="pb-6 text-base font-bold text-secondary w-[100px]">Membro</th>
-                            <th className="pb-6 text-base font-bold text-secondary w-[140px]">Datas</th>
-                            <th className="pb-6 text-base font-bold text-secondary">Descrição</th>
-                            <th className="pb-6 text-base font-bold text-secondary">Categorias</th>
-                            <th className="pb-6 text-base font-bold text-secondary">Conta/cartão</th>
-                            <th className="pb-6 text-base font-bold text-secondary">Parcelas</th>
-                            <th className="pb-6 text-base font-bold text-secondary text-right">Valor</th>
+                        <tr className="text-left border-b border-gray-100">
+                            <th className="pb-4 pl-6 text-xs font-bold text-gray-400 uppercase tracking-wider w-[80px]">Membro</th>
+                            <th className="pb-4 text-xs font-bold text-gray-400 uppercase tracking-wider w-[120px]">Data</th>
+                            <th className="pb-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Descrição</th>
+                            <th className="pb-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Categoria</th>
+                            <th className="pb-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Conta/Cartão</th>
+                            <th className="pb-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-center">Parcelas</th>
+                            <th className="pb-4 pr-6 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Valor</th>
                         </tr>
                     </thead>
-                    <tbody className="text-sm text-secondary">
+                    <tbody className="text-sm">
                         {paginatedData.length === 0 ? (
                             <tr>
-                                <td colSpan={7} className="py-8 text-center text-gray-400">
+                                <td colSpan={7} className="py-12 text-center text-gray-400">
                                     Nenhum lançamento encontrado.
                                 </td>
                             </tr>
@@ -138,19 +138,19 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                 const isIncome = transaction.type === 'income';
 
                                 return (
-                                    <tr key={transaction.id} className="group hover:bg-gray-50/50 transition-colors border-b border-transparent">
-                                        <td className="py-5 px-6">
-                                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
+                                    <tr key={transaction.id} className="group hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-none">
+                                        <td className="py-4 px-6">
+                                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100 border border-gray-200">
                                                 {member?.avatarUrl ? (
                                                     <img src={member.avatarUrl} alt={member.name} className="w-full h-full object-cover" />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                                        <User size={16} />
+                                                        <User size={14} />
                                                     </div>
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="py-5 px-6 text-gray-600">
+                                        <td className="py-4 text-gray-600 font-medium">
                                             {(() => {
                                                 try {
                                                     return format(parseISO(transaction.date), 'dd/MM/yyyy');
@@ -159,33 +159,42 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                                 }
                                             })()}
                                         </td>
-                                        <td className="py-5 px-6">
-                                            <div className="flex items-center gap-2">
-                                                {isIncome ? (
-                                                    <ArrowUp size={14} className="text-green-500" strokeWidth={3} />
-                                                ) : (
-                                                    <ArrowDown size={14} className="text-red-500" strokeWidth={3} />
-                                                )}
-
-                                                <span className="text-gray-600 font-medium">
+                                        <td className="py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className={cn(
+                                                    "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
+                                                    isIncome ? "bg-green-50 text-green-600" : "bg-red-50 text-red-500"
+                                                )}>
+                                                    {isIncome ? (
+                                                        <ArrowUp size={14} strokeWidth={2.5} />
+                                                    ) : (
+                                                        <ArrowDown size={14} strokeWidth={2.5} />
+                                                    )}
+                                                </div>
+                                                <span className="text-secondary font-bold">
                                                     {transaction.description}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="py-5 px-6 text-gray-600">
-                                            {transaction.category}
+                                        <td className="py-4">
+                                            <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-gray-100 text-gray-600">
+                                                {transaction.category}
+                                            </span>
                                         </td>
-                                        <td className="py-5 px-6 text-gray-600">
+                                        <td className="py-4 text-gray-500 text-sm">
                                             {getAccountOrCardName(transaction.accountId)}
                                         </td>
-                                        <td className="py-5 px-6 text-gray-600">
+                                        <td className="py-4 text-center text-gray-400 font-medium">
                                             {transaction.installments && transaction.installments > 1
                                                 ? `${transaction.installments}x`
                                                 : '-'}
                                         </td>
-                                        <td className="py-5 px-6 text-right font-medium text-gray-600">
-                                            {/* Screenshot shows just "R$ 100,00" in gray, no colors */}
-                                            {transaction.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                        <td className={cn(
+                                            "py-4 pr-6 text-right font-bold text-base",
+                                            isIncome ? "text-green-600" : "text-gray-900"
+                                        )}>
+                                            {isIncome ? '+' : '-'} {transaction.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }).replace('R$', '').trim()}
+                                            <span className="text-xs text-gray-400 font-normal ml-1">BRL</span>
                                         </td>
                                     </tr>
                                 );

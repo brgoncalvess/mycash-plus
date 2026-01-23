@@ -24,6 +24,7 @@ export interface FinanceGoal {
     category: string;
     deadline?: string;
     status: 'active' | 'archived';
+    yieldType?: 'CDI' | 'Savings' | 'Crypto' | 'Stocks';
 }
 
 export type CardTheme = 'black' | 'lime' | 'white';

@@ -5,7 +5,7 @@ import { User, Mail, DollarSign, LogOut, Plus, Edit2, Save, Lock, Eye, EyeOff, B
 import { AddMemberModal } from '../components/dashboard/members/AddMemberModal';
 
 export function ProfileView() {
-    const { members, updateMember } = useFinance();
+    const { members, updateMember, deleteMember } = useFinance();
     const [activeTab, setActiveTab] = useState<'info' | 'settings'>('info');
     const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
 
@@ -230,6 +230,21 @@ export function ProfileView() {
                                     <span className="text-sm font-bold text-green-600 bg-white px-3 py-1 rounded-full shadow-sm">
                                         {(member.income || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                     </span>
+                                    {/* Delete Button (Only if not self - simplified check) */}
+                                    {members.indexOf(member) !== 0 && (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (confirm('Tem certeza que deseja remover este membro?')) {
+                                                    deleteMember(member.id);
+                                                }
+                                            }}
+                                            className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
+                                            title="Remover membro"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    )}
                                 </div>
                             ))}
                         </div>

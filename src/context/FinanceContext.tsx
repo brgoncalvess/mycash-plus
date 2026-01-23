@@ -40,6 +40,7 @@ interface FinanceContextType {
     addGoal: (goal: Omit<FinanceGoal, 'id'>) => void;
     updateGoal: (id: string, updates: Partial<FinanceGoal>) => void;
     deleteGoal: (id: string) => void;
+    addGoalContribution: (id: string, amount: number) => void;
 
     // Derived Calculations (Selectors)
     getFilteredTransactions: () => Transaction[];
@@ -52,6 +53,7 @@ interface FinanceContextType {
     addCategory: (category: Omit<Category, 'id'>) => void;
     addMember: (member: Omit<FamilyMember, 'id'>) => void;
     updateMember: (id: string, updates: Partial<FamilyMember>) => void;
+    deleteMember: (id: string) => void;
     addAccount: (account: Omit<BankAccount, 'id'>) => void;
     updateAccount: (id: string, updates: Partial<BankAccount>) => void;
     addCard: (card: Omit<CreditCard, 'id'>) => void;
@@ -93,6 +95,10 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
     const updateMember = (id: string, updates: Partial<FamilyMember>) => {
         setMembers(prev => prev.map(m => m.id === id ? { ...m, ...updates } : m));
+    };
+
+    const deleteMember = (id: string) => {
+        setMembers(prev => prev.filter(m => m.id !== id));
     };
 
     // Categories
@@ -147,6 +153,15 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
     const deleteGoal = (id: string) => {
         setGoals(prev => prev.filter(g => g.id !== id));
+    };
+
+    const addGoalContribution = (id: string, amount: number) => {
+        setGoals(prev => prev.map(g => {
+            if (g.id === id) {
+                return { ...g, currentAmount: g.currentAmount + amount };
+            }
+            return g;
+        }));
     };
 
 
@@ -261,6 +276,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             addGoal,
             updateGoal,
             deleteGoal,
+            addGoalContribution,
             getFilteredTransactions,
             calculateTotalBalance,
             calculateIncomeForPeriod,
@@ -271,6 +287,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             addCategory,
             addMember,
             updateMember,
+            deleteMember,
             addAccount,
             updateAccount,
             addCard,

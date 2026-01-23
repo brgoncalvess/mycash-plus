@@ -12,7 +12,7 @@ import { DashboardView } from './views/DashboardView';
 
 // ...
 
-const Goals = () => <div className="p-4"></div>;
+import { GoalsView } from './views/GoalsView';
 
 // Layout Component
 function Layout() {
@@ -54,7 +54,7 @@ export const router = createBrowserRouter([
         children: [
             { path: '/', element: <DashboardView /> },
             { path: '/dashboard', element: <DashboardView /> },
-            { path: '/goals', element: <Goals /> },
+            { path: '/goals', element: <GoalsView /> },
             { path: '/cards', element: <CardsView /> },
             { path: '/transactions', element: <TransactionsView /> },
             { path: '/profile', element: <ProfileView /> },
