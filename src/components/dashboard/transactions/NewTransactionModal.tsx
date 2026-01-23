@@ -13,6 +13,7 @@ import { MaterialDatePickerModal } from '../../ui/MaterialDatePickerModal';
 import { useFinance } from '../../../context/FinanceContext';
 import { cn } from '../../../utils/cn';
 import type { TransactionType } from '../../../types';
+import { formatCurrencyMask, parseCurrencyToNumber } from '../../../utils/masks';
 
 interface NewTransactionModalProps {
     isOpen: boolean;
@@ -120,7 +121,7 @@ export function NewTransactionModal({ isOpen, onClose, initialAccountId }: NewTr
 
     const handleSubmit = () => {
         const formErrors: typeof errors = {};
-        const numericAmount = parseFloat(amount.replace(/\./g, '').replace(',', '.'));
+        const numericAmount = parseCurrencyToNumber(amount);
 
         if (!amount || isNaN(numericAmount) || numericAmount <= 0) {
             formErrors.amount = "O valor deve ser maior que zero";
@@ -262,10 +263,11 @@ export function NewTransactionModal({ isOpen, onClose, initialAccountId }: NewTr
                             )}>
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">R$</span>
                                 <input
-                                    type="number"
+                                    type="text" // Text due to mask
+                                    inputMode="numeric"
                                     value={amount}
                                     onChange={(e) => {
-                                        setAmount(e.target.value);
+                                        setAmount(formatCurrencyMask(e.target.value));
                                         if (errors.amount) setErrors({ ...errors, amount: undefined });
                                     }}
                                     className={cn(

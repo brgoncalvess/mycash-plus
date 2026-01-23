@@ -5,6 +5,7 @@ import { cn } from '../../../utils/cn';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { BankLogo } from '../../ui/BankLogo';
+import { formatCurrencyMask, parseCurrencyToNumber } from '../../../utils/masks';
 
 interface CardDetailsModalProps {
     isOpen: boolean;
@@ -32,7 +33,7 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
             setPage(0);
             setIsEditing(false);
             setEditName(card.name);
-            setEditLimit(card.limit.toString());
+            setEditLimit(formatCurrencyMask(card.limit.toFixed(2)));
             setEditClosing(card.closingDay.toString());
             setEditDue(card.dueDay.toString());
             document.body.style.overflow = 'hidden';
@@ -56,7 +57,7 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
         if (card) {
             updateCard(card.id, {
                 name: editName,
-                limit: parseFloat(editLimit.replace(/\./g, '').replace(',', '.')),
+                limit: parseCurrencyToNumber(editLimit),
                 closingDay: parseInt(editClosing),
                 dueDay: parseInt(editDue)
             });
@@ -190,9 +191,10 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
                                 <p className="text-xs text-gray-500 font-medium mb-1">Limite Total</p>
                                 {isEditing ? (
                                     <input
-                                        type="number"
+                                        type="text"
+                                        inputMode="numeric"
                                         value={editLimit}
-                                        onChange={e => setEditLimit(e.target.value)}
+                                        onChange={e => setEditLimit(formatCurrencyMask(e.target.value))}
                                         className="text-lg font-bold text-secondary border-b border-gray-300 focus:border-brand focus:outline-none bg-transparent w-full"
                                     />
                                 ) : (

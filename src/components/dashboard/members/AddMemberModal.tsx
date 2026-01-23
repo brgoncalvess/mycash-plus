@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Image as ImageIcon, Link, Upload as UploadIcon } from 'lucide-react';
 import { useFinance } from '../../../context/FinanceContext';
 import { cn } from '../../../utils/cn';
+import { formatCurrencyMask, parseCurrencyToNumber } from '../../../utils/masks';
 
 interface AddMemberModalProps {
     isOpen: boolean;
@@ -93,7 +94,7 @@ export function AddMemberModal({ isOpen, onClose }: AddMemberModalProps) {
 
         if (Object.keys(formErrors).length === 0) {
             const numericIncome = income
-                ? parseFloat(income.replace(/\./g, '').replace(',', '.'))
+                ? parseCurrencyToNumber(income)
                 : 0;
 
             // For file upload, in a real app we'd upload to a server here.
@@ -259,9 +260,10 @@ export function AddMemberModal({ isOpen, onClose }: AddMemberModalProps) {
                         <div className="relative">
                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">R$</span>
                             <input
-                                type="number"
+                                type="text"
+                                inputMode="numeric"
                                 value={income}
-                                onChange={(e) => setIncome(e.target.value)}
+                                onChange={(e) => setIncome(formatCurrencyMask(e.target.value))}
                                 placeholder="0,00"
                                 className="w-full h-11 pl-10 pr-4 rounded-lg border border-gray-200 focus:border-brand focus:ring-2 focus:ring-brand/10 outline-none text-sm"
                             />

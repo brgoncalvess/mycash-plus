@@ -4,6 +4,7 @@ import { useFinance } from '../../../context/FinanceContext';
 import { cn } from '../../../utils/cn';
 import { BANKS } from '../../../constants/banks';
 import type { CardTheme } from '../../../types';
+import { formatCurrencyMask, parseCurrencyToNumber } from '../../../utils/masks';
 
 interface AddCardModalProps {
     isOpen: boolean;
@@ -92,7 +93,7 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
         } else {
             const closing = parseInt(closingDay);
             const due = parseInt(dueDay);
-            const limitVal = parseFloat(limit.replace(/\./g, '').replace(',', '.'));
+            const limitVal = parseCurrencyToNumber(limit);
 
             if (!closingDay || isNaN(closing) || closing < 1 || closing > 31) {
                 formErrors.closingDay = "Dia inválido.";
@@ -112,7 +113,7 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
 
         if (Object.keys(formErrors).length === 0) {
             if (type === 'account') {
-                const numericBalance = parseFloat(initialBalance.replace(/\./g, '').replace(',', '.'));
+                const numericBalance = parseCurrencyToNumber(initialBalance);
 
                 // Colors for accounts usually fixed or random. Prompt didn't specify, picking random.
                 const colors = ['#EF4444', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6'];
@@ -128,7 +129,7 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
                 // Show Toast
                 showToast("Conta adicionada com sucesso!");
             } else {
-                const numericLimit = parseFloat(limit.replace(/\./g, '').replace(',', '.'));
+                const numericLimit = parseCurrencyToNumber(limit);
 
                 const selectedBank = BANKS.find(b => b.id === bankId);
 
@@ -309,10 +310,11 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
                             <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">R$</span>
                                 <input
-                                    type="number"
+                                    type="text"
+                                    inputMode="numeric"
                                     value={initialBalance}
                                     onChange={(e) => {
-                                        setInitialBalance(e.target.value);
+                                        setInitialBalance(formatCurrencyMask(e.target.value));
                                         if (errors.balance) setErrors({ ...errors, balance: undefined });
                                     }}
                                     placeholder="0,00"
@@ -374,10 +376,11 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
                                 <div className="relative">
                                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">R$</span>
                                     <input
-                                        type="number"
+                                        type="text"
+                                        inputMode="numeric"
                                         value={limit}
                                         onChange={(e) => {
-                                            setLimit(e.target.value);
+                                            setLimit(formatCurrencyMask(e.target.value));
                                             if (errors.limit) setErrors({ ...errors, limit: undefined });
                                         }}
                                         placeholder="0,00"
