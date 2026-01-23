@@ -11,6 +11,7 @@ import { Sidebar } from './components/layout/Sidebar';
 import { MobileHeader } from './components/layout/MobileHeader';
 import { CardsView } from './views/CardsView';
 import { TransactionsView } from './views/TransactionsView';
+import { ProfileView } from './views/ProfileView';
 
 const Dashboard = () => (
     <div className="flex flex-col gap-6 pb-20">
@@ -48,7 +49,6 @@ const Dashboard = () => (
 );
 
 const Goals = () => <div className="p-4"></div>;
-const Profile = () => <div className="p-4"></div>;
 
 // Layout Component
 function Layout() {
@@ -88,7 +88,7 @@ export const router = createBrowserRouter([
             { path: '/goals', element: <Goals /> },
             { path: '/cards', element: <CardsView /> },
             { path: '/transactions', element: <TransactionsView /> },
-            { path: '/profile', element: <Profile /> },
+            { path: '/profile', element: <ProfileView /> },
         ],
     },
 ]);
