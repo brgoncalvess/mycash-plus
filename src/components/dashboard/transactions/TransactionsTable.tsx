@@ -139,7 +139,7 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
 
                                 return (
                                     <tr key={transaction.id} className="group hover:bg-gray-50/50 transition-colors border-b border-transparent">
-                                        <td className="py-5">
+                                        <td className="py-5 px-6">
                                             <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
                                                 {member?.avatarUrl ? (
                                                     <img src={member.avatarUrl} alt={member.name} className="w-full h-full object-cover" />
@@ -150,7 +150,7 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="py-5 text-gray-600">
+                                        <td className="py-5 px-6 text-gray-600">
                                             {(() => {
                                                 try {
                                                     return format(parseISO(transaction.date), 'dd/MM/yyyy');
@@ -159,7 +159,7 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                                 }
                                             })()}
                                         </td>
-                                        <td className="py-5">
+                                        <td className="py-5 px-6">
                                             <div className="flex items-center gap-2">
                                                 {isIncome ? (
                                                     <ArrowUp size={14} className="text-green-500" strokeWidth={3} />
@@ -172,18 +172,18 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="py-5 text-gray-600">
+                                        <td className="py-5 px-6 text-gray-600">
                                             {transaction.category}
                                         </td>
-                                        <td className="py-5 text-gray-600">
+                                        <td className="py-5 px-6 text-gray-600">
                                             {getAccountOrCardName(transaction.accountId)}
                                         </td>
-                                        <td className="py-5 text-gray-600">
+                                        <td className="py-5 px-6 text-gray-600">
                                             {transaction.installments && transaction.installments > 1
                                                 ? `${transaction.installments}x`
                                                 : '-'}
                                         </td>
-                                        <td className="py-5 text-right font-medium text-gray-600">
+                                        <td className="py-5 px-6 text-right font-medium text-gray-600">
                                             {/* Screenshot shows just "R$ 100,00" in gray, no colors */}
                                             {transaction.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                         </td>

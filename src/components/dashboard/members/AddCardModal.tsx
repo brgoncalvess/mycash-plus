@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useFinance } from '../../../context/FinanceContext';
 import { cn } from '../../../utils/cn';
+import { BANKS } from '../../../constants/banks';
 import type { CardTheme } from '../../../types';
 
 interface AddCardModalProps {
@@ -14,6 +15,7 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
 
     // Form State
     const [type, setType] = useState<'account' | 'creditCard'>('account');
+    const [bankId, setBankId] = useState('');
     const [name, setName] = useState('');
     const [holderId, setHolderId] = useState(''); // Member ID
 
@@ -44,6 +46,7 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
         if (isOpen) {
             // Reset
             setType('account');
+            setBankId('');
             setName('');
             setHolderId('');
             setInitialBalance('');
@@ -127,6 +130,8 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
             } else {
                 const numericLimit = parseFloat(limit.replace(/\./g, '').replace(',', '.'));
 
+                const selectedBank = BANKS.find(b => b.id === bankId);
+
                 addCard({
                     name: name.trim(),
                     closingDay: parseInt(closingDay),
@@ -135,7 +140,8 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
                     currentInvoice: 0,
                     theme: theme,
                     last4Digits: last4Digits || undefined,
-                    logoUrl: undefined // Prompt didn't specify logo upload
+                    logoUrl: selectedBank?.logoUrl, // Prompt didn't specify logo upload
+                    bankName: selectedBank?.name
                 });
 
                 // Show Toast
@@ -213,6 +219,35 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
                         >
                             Cartão de Crédito
                         </button>
+                    </div>
+
+
+
+                    {/* Bank Selector */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm font-bold text-gray-700">Instituição Financeira</label>
+                        <div className="relative">
+                            <select
+                                value={bankId}
+                                onChange={(e) => {
+                                    const id = e.target.value;
+                                    setBankId(id);
+                                    const bank = BANKS.find(b => b.id === id);
+                                    if (bank && !name) {
+                                        setName(bank.name + (type === 'creditCard' ? '' : ''));
+                                    }
+                                }}
+                                className="w-full h-12 px-4 rounded-xl border border-gray-200 bg-white focus:outline-none focus:border-brand transition-all appearance-none cursor-pointer"
+                            >
+                                <option value="">Selecione um banco (Opcional)</option>
+                                {BANKS.map(bank => (
+                                    <option key={bank.id} value={bank.id}>{bank.name}</option>
+                                ))}
+                            </select>
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Name */}
@@ -431,6 +466,6 @@ export function AddCardModal({ isOpen, onClose }: AddCardModalProps) {
                     </button>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

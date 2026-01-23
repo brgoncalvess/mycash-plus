@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
-import { X, Calendar, CreditCard, Plus, ChevronLeft, ChevronRight, FileText, Edit2 } from 'lucide-react';
+import { X, Calendar, CreditCard, ChevronLeft, ChevronRight, Edit2, Save } from 'lucide-react';
 import { useFinance } from '../../../context/FinanceContext';
 import { cn } from '../../../utils/cn';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { getBankLogo } from '../../../constants/banks';
 
 interface CardDetailsModalProps {
     isOpen: boolean;
@@ -12,31 +13,66 @@ interface CardDetailsModalProps {
 }
 
 export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalProps) {
-    const { cards, transactions } = useFinance(); // Using context
+    const { cards, transactions, updateCard } = useFinance();
     const [page, setPage] = useState(0);
     const [showExiting, setShowExiting] = useState(false);
 
-    // Reset page and anim on open
+    // Edit State
+    const [isEditing, setIsEditing] = useState(false);
+    const [editName, setEditName] = useState('');
+    const [editLimit, setEditLimit] = useState('');
+    const [editClosing, setEditClosing] = useState('');
+    const [editDue, setEditDue] = useState('');
+
+    const card = useMemo(() => cards.find(c => c.id === cardId), [cards, cardId]);
+
+    // Reset state when opening
     useEffect(() => {
-        if (isOpen) {
+        if (isOpen && card) {
             setPage(0);
+            setIsEditing(false);
+            setEditName(card.name);
+            setEditLimit(card.limit.toString());
+            setEditClosing(card.closingDay.toString());
+            setEditDue(card.dueDay.toString());
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'unset';
             setShowExiting(false);
         }
         return () => { document.body.style.overflow = 'unset'; }
-    }, [isOpen]);
+    }, [isOpen, card]);
 
     const handleClose = () => {
         setShowExiting(true);
         setTimeout(() => {
             onClose();
             setShowExiting(false);
+            setIsEditing(false);
         }, 300);
     };
 
-    const card = useMemo(() => cards.find(c => c.id === cardId), [cards, cardId]);
+    const handleSave = () => {
+        if (card) {
+            updateCard(card.id, {
+                name: editName,
+                limit: parseFloat(editLimit.replace(/\./g, '').replace(',', '.')),
+                closingDay: parseInt(editClosing),
+                dueDay: parseInt(editDue)
+            });
+            setIsEditing(false);
+
+            // Simple toast
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-4 right-4 bg-secondary text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 z-[100] animate-in slide-in-from-right duration-300';
+            toast.innerHTML = `<div class="bg-green-500 rounded-full p-1"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div><span class="font-bold">Cartão atualizado!</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'transition-opacity');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    };
 
     const cardTransactions = useMemo(() => {
         if (!cardId) return [];
@@ -59,6 +95,8 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (usagePercentage / 100) * circumference;
 
+    const logoUrl = card.logoUrl || getBankLogo(card.bankName || card.name) || '';
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div
@@ -77,24 +115,60 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
             >
                 {/* Header */}
                 <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 shrink-0">
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 w-full">
                         <div className={cn(
-                            "w-12 h-12 rounded-xl flex items-center justify-center shadow-inner",
+                            "w-12 h-12 rounded-xl flex items-center justify-center shadow-inner overflow-hidden",
                             card.theme === 'black' ? "bg-secondary text-white" :
                                 card.theme === 'lime' ? "bg-brand text-secondary" :
                                     "bg-white border text-secondary"
                         )}>
-                            <CreditCard size={24} />
+                            {logoUrl ? (
+                                <img src={logoUrl} alt={card.name} className="w-full h-full object-contain p-1" />
+                            ) : (
+                                <CreditCard size={24} />
+                            )}
                         </div>
-                        <div>
-                            <h2 className="text-2xl font-bold text-secondary">{card.name}</h2>
-                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="flex-1">
+                            {isEditing ? (
+                                <input
+                                    value={editName}
+                                    onChange={e => setEditName(e.target.value)}
+                                    className="text-2xl font-bold text-secondary border-b border-gray-300 focus:border-brand focus:outline-none bg-transparent w-full"
+                                    placeholder="Nome do Cartão"
+                                />
+                            ) : (
+                                <h2 className="text-2xl font-bold text-secondary">{card.name}</h2>
+                            )}
+
+                            <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
                                 <span className="flex items-center gap-1">
                                     <Calendar size={14} />
-                                    Fechamento: Dia {card.closingDay}
+                                    Fechamento: Dia
+                                    {isEditing ? (
+                                        <input
+                                            type="number"
+                                            value={editClosing}
+                                            onChange={e => setEditClosing(e.target.value)}
+                                            className="w-12 border-b border-gray-300 focus:border-brand focus:outline-none text-center bg-transparent ml-1"
+                                        />
+                                    ) : (
+                                        ` ${card.closingDay}`
+                                    )}
                                 </span>
                                 <span className="w-1 h-1 bg-gray-300 rounded-full" />
-                                <span>Vencimento: Dia {card.dueDay}</span>
+                                <span className="flex items-center gap-1">
+                                    Vencimento: Dia
+                                    {isEditing ? (
+                                        <input
+                                            type="number"
+                                            value={editDue}
+                                            onChange={e => setEditDue(e.target.value)}
+                                            className="w-12 border-b border-gray-300 focus:border-brand focus:outline-none text-center bg-transparent ml-1"
+                                        />
+                                    ) : (
+                                        ` ${card.dueDay}`
+                                    )}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -111,14 +185,22 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
 
                     {/* Top Section: Info & Charts */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
                         {/* Info Cards Grid */}
                         <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                                 <p className="text-xs text-gray-500 font-medium mb-1">Limite Total</p>
-                                <p className="text-lg font-bold text-secondary">
-                                    {card.limit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                </p>
+                                {isEditing ? (
+                                    <input
+                                        type="number"
+                                        value={editLimit}
+                                        onChange={e => setEditLimit(e.target.value)}
+                                        className="text-lg font-bold text-secondary border-b border-gray-300 focus:border-brand focus:outline-none bg-transparent w-full"
+                                    />
+                                ) : (
+                                    <p className="text-lg font-bold text-secondary">
+                                        {card.limit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                    </p>
+                                )}
                             </div>
                             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                                 <p className="text-xs text-gray-500 font-medium mb-1">Fatura Atual</p>
@@ -151,20 +233,13 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
                             <div className="relative w-32 h-32 flex items-center justify-center">
                                 {/* SVG Donut */}
                                 <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r={radius} fill="none" stroke="#f3f4f6" strokeWidth="10" />
                                     <circle
                                         cx="50"
                                         cy="50"
                                         r={radius}
                                         fill="none"
-                                        stroke="#f3f4f6"
-                                        strokeWidth="10"
-                                    />
-                                    <circle
-                                        cx="50"
-                                        cy="50"
-                                        r={radius}
-                                        fill="none"
-                                        stroke={usagePercentage > 90 ? "#EF4444" : "#3247FF"} // Red if > 90%
+                                        stroke={usagePercentage > 90 ? "#EF4444" : "#3247FF"}
                                         strokeWidth="10"
                                         strokeDasharray={circumference}
                                         strokeDashoffset={strokeDashoffset}
@@ -184,11 +259,7 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center justify-between">
                             <h3 className="text-lg font-bold text-secondary">Despesas Recentes</h3>
-                            <button className="text-sm text-brand font-bold hover:underline">
-                                Ver todas
-                            </button>
                         </div>
-
                         <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
                             <table className="w-full">
                                 <thead className="bg-gray-50 border-b border-gray-100">
@@ -196,15 +267,14 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
                                         <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Data</th>
                                         <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Descrição</th>
                                         <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase hidden sm:table-cell">Categoria</th>
-                                        <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase hidden sm:table-cell">Parc.</th>
                                         <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase">Valor</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
-                                    {cardTransactions.length === 0 ? (
+                                    {displayedTransactions.length === 0 ? (
                                         <tr>
-                                            <td colSpan={5} className="px-6 py-12 text-center text-gray-400 text-sm">
-                                                Nenhuma despesa registrada neste cartão ainda.
+                                            <td colSpan={4} className="px-6 py-12 text-center text-gray-400 text-sm">
+                                                Nenhuma despesa registrada.
                                             </td>
                                         </tr>
                                     ) : (
@@ -221,9 +291,6 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
                                                         {t.category}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4 text-sm text-gray-500 hidden sm:table-cell">
-                                                    {t.installments && t.installments > 1 ? `${t.installments}x` : '-'}
-                                                </td>
                                                 <td className="px-6 py-4 text-sm text-right font-bold text-secondary">
                                                     {t.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                                 </td>
@@ -232,27 +299,12 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
                                     )}
                                 </tbody>
                             </table>
-
                             {/* Pagination */}
                             {totalPages > 1 && (
                                 <div className="p-4 border-t border-gray-100 flex items-center justify-between">
-                                    <button
-                                        onClick={() => setPage(p => Math.max(0, p - 1))}
-                                        disabled={page === 0}
-                                        className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-secondary"
-                                    >
-                                        <ChevronLeft size={16} />
-                                    </button>
-                                    <span className="text-xs font-bold text-gray-500">
-                                        Página {page + 1} de {totalPages}
-                                    </span>
-                                    <button
-                                        onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
-                                        disabled={page === totalPages - 1}
-                                        className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-secondary"
-                                    >
-                                        <ChevronRight size={16} />
-                                    </button>
+                                    <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-secondary"><ChevronLeft size={16} /></button>
+                                    <span className="text-xs font-bold text-gray-500">Página {page + 1} de {totalPages}</span>
+                                    <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page === totalPages - 1} className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-secondary"><ChevronRight size={16} /></button>
                                 </div>
                             )}
                         </div>
@@ -262,42 +314,40 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
 
                 {/* Footer Actions */}
                 <div className="px-8 py-6 border-t border-gray-100 flex flex-wrap justify-end gap-3 shrink-0 rounded-b-3xl bg-gray-50/50">
-                    <button
-                        onClick={() => {
-                            // "Ver Extrato Completo" - just close for now, ideally navigate to /expenses with filter in URL
-                            handleClose();
-                        }}
-                        className="px-4 h-12 rounded-xl bg-white border border-gray-200 text-secondary text-sm font-bold hover:bg-gray-50 transition-colors shadow-sm flex items-center gap-2"
-                    >
-                        <FileText size={16} className="text-gray-400" />
-                        Ver Extrato
-                    </button>
-                    <button
-                        onClick={() => {/* Edit Logic Placeholder */ }}
-                        className="px-4 h-12 rounded-xl bg-white border border-gray-200 text-secondary text-sm font-bold hover:bg-gray-50 transition-colors shadow-sm flex items-center gap-2"
-                    >
-                        <Edit2 size={16} className="text-gray-400" />
-                        Editar
-                    </button>
-                    <div className="flex-1 lg:flex-none" /> {/* Spacer on mobile */}
-                    <button
-                        onClick={handleClose}
-                        className="px-6 h-12 rounded-xl border border-gray-200 text-gray-600 font-bold hover:bg-white transition-colors"
-                    >
-                        Fechar
-                    </button>
-                    <button
-                        onClick={() => {
-                            // "Adicionar Despesa" - Open NewTransactionModal prefilled (not implemented in this step specifically as wiring, but logic placeholder)
-                            // Would need to lift state up or pass a global "openTransactionModal(initialData)" context function.
-                            // For now, stick to prompt specifics.
-                            handleClose();
-                        }}
-                        className="px-6 h-12 rounded-xl bg-secondary text-white font-bold hover:bg-secondary/90 transition-all shadow-lg active:scale-95 flex items-center gap-2"
-                    >
-                        <Plus size={18} />
-                        Nova Despesa
-                    </button>
+                    {isEditing ? (
+                        <>
+                            <button
+                                onClick={() => setIsEditing(false)}
+                                className="px-6 h-12 rounded-xl border border-gray-200 text-gray-600 font-bold hover:bg-white transition-colors"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                className="px-8 h-12 rounded-xl bg-secondary text-white font-bold hover:bg-secondary/90 transition-all shadow-lg active:scale-95 flex items-center gap-2"
+                            >
+                                <Save size={18} />
+                                Salvar Alterações
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="px-6 h-12 rounded-xl bg-white border border-gray-200 text-secondary text-sm font-bold hover:bg-gray-50 transition-colors shadow-sm flex items-center gap-2"
+                            >
+                                <Edit2 size={16} className="text-gray-400" />
+                                Editar
+                            </button>
+                            <div className="flex-1 lg:flex-none" />
+                            <button
+                                onClick={handleClose}
+                                className="px-6 h-12 rounded-xl border border-gray-200 text-gray-600 font-bold hover:bg-white transition-colors"
+                            >
+                                Fechar
+                            </button>
+                        </>
+                    )}
                 </div>
             </div>
         </div>

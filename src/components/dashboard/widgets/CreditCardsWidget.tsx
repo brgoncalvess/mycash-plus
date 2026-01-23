@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CreditCard as CreditCardIcon, Plus, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useFinance } from '../../../context/FinanceContext';
 import { CardDetailsModal } from '../cards/CardDetailsModal';
 
@@ -10,6 +11,7 @@ interface CreditCardsWidgetProps {
 export function CreditCardsWidget({ onAddCard }: CreditCardsWidgetProps) {
     const { cards } = useFinance();
     const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     return (
         <section className="bg-white border border-secondary-50 rounded-[32px] p-8 flex flex-col shadow-sm h-[518px]">
@@ -30,7 +32,7 @@ export function CreditCardsWidget({ onAddCard }: CreditCardsWidgetProps) {
                         <Plus size={20} />
                     </button>
                     <button
-                        // Navigate to full cards view? For now just a placeholder action
+                        onClick={() => navigate('/cards')}
                         className="w-10 h-10 flex items-center justify-center rounded-full border border-secondary-50 text-secondary hover:bg-gray-50 transition-colors"
                         title="Ver todos"
                     >

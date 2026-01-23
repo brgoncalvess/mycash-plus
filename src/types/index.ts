@@ -37,6 +37,7 @@ export interface CreditCard {
     currentInvoice: number;
     theme: CardTheme;
     logoUrl?: string;
+    bankName?: string;
     last4Digits?: string;
 }
 
