@@ -24,21 +24,22 @@ export function DashboardView() {
                 onAddMember={() => setIsMemberModalOpen(true)}
             />
 
-            {/* 1. Categories Row */}
-            <ExpensesByCategoryCarousel />
+            {/* Main Grid: Left Content (2/3) + Right Sidebar (1/3) */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+                {/* LEFT COLUMN: Main content area */}
+                <div className="xl:col-span-2 flex flex-col gap-6 w-full min-w-0">
+                    {/* 1. Categories */}
+                    <ExpensesByCategoryCarousel />
 
-            {/* 2. Summary Cards Row */}
-            <SummarySection />
+                    {/* 2. Summary Cards */}
+                    <SummarySection />
 
-            {/* 3. Main Grid: Chart + Sidebar Widgets */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                {/* Left: Chart */}
-                <div className="xl:col-span-2">
+                    {/* 3. Financial Flow Chart */}
                     <FinancialFlowChart />
                 </div>
 
-                {/* Right: Sidebar Widgets */}
-                <div className="xl:col-span-1 flex flex-col gap-6">
+                {/* RIGHT COLUMN: Sidebar widgets */}
+                <div className="xl:col-span-1 flex flex-col gap-6 w-full min-w-0">
                     <CreditCardsWidget
                         onAddCard={() => setIsCardModalOpen(true)}
                     />
