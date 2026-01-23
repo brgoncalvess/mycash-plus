@@ -82,7 +82,7 @@ export function UpcomingExpensesWidget({ onAddExpense }: UpcomingExpensesWidgetP
     const prevPage = () => setCurrentPage(p => Math.max(p - 1, 0));
 
     return (
-        <section className="bg-white border border-secondary-50 rounded-[32px] p-8 flex flex-col shadow-sm h-[572px] justify-between">
+        <section className="bg-white border border-secondary-50 rounded-[32px] p-8 flex flex-col shadow-sm min-h-[572px] h-auto justify-between">
             <div>
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
