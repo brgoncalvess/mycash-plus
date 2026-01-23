@@ -7,10 +7,12 @@ import { ptBR } from 'date-fns/locale';
 import { NewTransactionModal } from './transactions/NewTransactionModal';
 import { AddMemberModal } from './members/AddMemberModal';
 import { AddCardModal } from './members/AddCardModal';
+import { FiltersMobileModal } from './filters/FiltersMobileModal';
 
 export function DashboardHeader() {
     const { filters, setFilters, members } = useFinance();
     const [showFilters, setShowFilters] = useState(false);
+    const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
     const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
     const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
     const [isCardModalOpen, setIsCardModalOpen] = useState(false);
@@ -56,7 +58,13 @@ export function DashboardHeader() {
 
                     {/* Filter Button */}
                     <button
-                        onClick={() => setShowFilters(!showFilters)}
+                        onClick={() => {
+                            if (window.innerWidth < 1024) {
+                                setIsMobileFiltersOpen(true);
+                            } else {
+                                setShowFilters(!showFilters);
+                            }
+                        }}
                         className={cn(
                             "flex items-center justify-center w-12 h-12 rounded-full border transition-all shrink-0 shadow-sm",
                             showFilters
@@ -182,6 +190,12 @@ export function DashboardHeader() {
             <AddCardModal
                 isOpen={isCardModalOpen}
                 onClose={() => setIsCardModalOpen(false)}
+            />
+
+            {/* Mobile Filters Modal */}
+            <FiltersMobileModal
+                isOpen={isMobileFiltersOpen}
+                onClose={() => setIsMobileFiltersOpen(false)}
             />
         </div>
     );
