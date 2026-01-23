@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import {
+    Calendar as CalendarIcon,
     X,
     ArrowDownLeft,
     ArrowUpRight,
     Repeat,
     Check
 } from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { MaterialDatePickerModal } from '../../ui/MaterialDatePickerModal';
 import { useFinance } from '../../../context/FinanceContext';
 import { cn } from '../../../utils/cn';
 import type { TransactionType } from '../../../types';
@@ -29,6 +33,7 @@ export function NewTransactionModal({ isOpen, onClose, initialAccountId }: NewTr
     // Form State
     const [type, setType] = useState<TransactionType>('expense');
     const [amount, setAmount] = useState('');
+    const [date, setDate] = useState<Date>(new Date());
     const [description, setDescription] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [memberId, setMemberId] = useState('');
@@ -39,6 +44,9 @@ export function NewTransactionModal({ isOpen, onClose, initialAccountId }: NewTr
     // New Category State
     const [isCreatingCategory, setIsCreatingCategory] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState('');
+
+    // Date Picker State
+    const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
     // Validation Errors
     const [errors, setErrors] = useState<{
@@ -59,6 +67,7 @@ export function NewTransactionModal({ isOpen, onClose, initialAccountId }: NewTr
             // Reset form on open
             setType('expense');
             setAmount('');
+            setDate(new Date());
             setDescription('');
             setCategoryId('');
             setMemberId('');
@@ -134,7 +143,7 @@ export function NewTransactionModal({ isOpen, onClose, initialAccountId }: NewTr
                 amount: numericAmount,
                 description,
                 category: categories.find(c => c.id === categoryId)?.name || 'Outros',
-                date: new Date().toISOString(),
+                date: date.toISOString(),
                 accountId,
                 memberId: memberId || undefined,
                 installments: isCreditCard(accountId) && type === 'expense' && !isRecurring ? installments : 1,
@@ -269,6 +278,20 @@ export function NewTransactionModal({ isOpen, onClose, initialAccountId }: NewTr
                                 />
                             </div>
                             {errors.amount && <p className="text-xs text-red-500 font-medium ml-1">{errors.amount}</p>}
+                        </div>
+
+                        {/* Date Picker Input */}
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-bold text-gray-700 ml-1">Data</label>
+                            <button
+                                onClick={() => setIsDatePickerOpen(true)}
+                                className="w-full h-14 px-4 rounded-xl border border-gray-200 bg-white text-base text-secondary flex items-center gap-3 outline-none hover:border-brand transition-colors text-left"
+                            >
+                                <CalendarIcon size={20} className="text-gray-400" />
+                                <span className="font-medium">
+                                    {format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                                </span>
+                            </button>
                         </div>
 
                         {/* Description Input */}
@@ -504,6 +527,13 @@ export function NewTransactionModal({ isOpen, onClose, initialAccountId }: NewTr
                     </button>
                 </div>
             </div>
+
+            <MaterialDatePickerModal
+                isOpen={isDatePickerOpen}
+                onClose={() => setIsDatePickerOpen(false)}
+                onSelect={setDate}
+                initialDate={date}
+            />
         </div>
     );
 }
