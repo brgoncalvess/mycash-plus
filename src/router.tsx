@@ -6,77 +6,50 @@ import { ExpensesByCategoryCarousel } from './components/dashboard/categories/Ex
 import { FinancialFlowChart } from './components/dashboard/charts/FinancialFlowChart';
 import { CreditCardsWidget } from './components/dashboard/widgets/CreditCardsWidget';
 import { UpcomingExpensesWidget } from './components/dashboard/widgets/UpcomingExpensesWidget';
+import { TransactionsTable } from './components/dashboard/transactions/TransactionsTable';
 import { Sidebar } from './components/layout/Sidebar';
 import { MobileHeader } from './components/layout/MobileHeader';
 
 const Dashboard = () => (
     <div className="flex flex-col gap-6 pb-20">
-        {/* Page Title */}
-        <div>
-            <h1 className="text-2xl font-bold text-secondary mb-1">Dashboard</h1>
-            <p className="text-gray-500">Visão geral das suas finanças</p>
-        </div>
-
         {/* Header with Controls */}
         <DashboardHeader />
 
-        {/* Category Carousel */}
-        <ExpensesByCategoryCarousel />
-
-        {/* Summary Cards */}
-        <SummarySection />
-
-        {/* Main Content Grid: Left (Charts + Table) + Right (Widgets) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left Column - 2/3 width */}
-            <div className="lg:col-span-2 flex flex-col gap-6">
-                {/* Financial Flow Chart */}
-                <FinancialFlowChart />
-
-                {/* Detailed Statement Table */}
-                <section className="bg-surface border border-secondary-50 rounded-2xl p-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-bold text-secondary flex items-center gap-2">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            Extrato detalhado
-                        </h2>
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="text"
-                                placeholder="Buscar lançamentos"
-                                className="h-9 px-3 text-sm border border-secondary-50 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand/20"
-                            />
-                            <select className="h-9 px-3 text-sm border border-secondary-50 rounded-lg focus:outline-none focus:ring-1 focus:ring-brand/20">
-                                <option>Despesas</option>
-                                <option>Receitas</option>
-                                <option>Todos</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div className="text-sm text-gray-400 text-center py-8">
-                        Tabela de transações (em desenvolvimento)
-                    </div>
-                </section>
+        {/* Top Section: Categories & Summary (Left) + Credit Cards (Right) */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* Left Column: Categories + Summary */}
+            <div className="xl:col-span-2 flex flex-col gap-6">
+                <ExpensesByCategoryCarousel />
+                <SummarySection />
             </div>
 
-            {/* Right Column - 1/3 width */}
-            <div className="flex flex-col gap-6">
-                {/* Cards & Accounts Widget */}
+            {/* Right Column: Cards & Accounts */}
+            <div className="xl:col-span-1 flex flex-col gap-6">
                 <CreditCardsWidget />
+            </div>
+        </div>
 
-                {/* Upcoming Expenses Widget */}
+        {/* Middle Section: Charts */}
+        <div className="w-full">
+            <FinancialFlowChart />
+        </div>
+
+        {/* Bottom Section: Transactions & Upcoming */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div className="xl:col-span-2">
+                <TransactionsTable />
+            </div>
+            <div className="xl:col-span-1">
                 <UpcomingExpensesWidget />
             </div>
         </div>
     </div>
 );
 
-const Goals = () => <div className="p-4"><h1>Objetivos</h1></div>;
-const Cards = () => <div className="p-4"><h1>Cartões</h1></div>;
-const Transactions = () => <div className="p-4"><h1>Transações</h1></div>;
-const Profile = () => <div className="p-4"><h1>Perfil</h1></div>;
+const Goals = () => <div className="p-4"></div>;
+const Cards = () => <div className="p-4"></div>;
+const Transactions = () => <div className="p-4"></div>;
+const Profile = () => <div className="p-4"></div>;
 
 // Layout Component
 function Layout() {
