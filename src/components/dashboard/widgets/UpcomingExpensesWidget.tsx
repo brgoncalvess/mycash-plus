@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Wallet, Plus, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { toast } from 'sonner';
+import { cn } from '../../../utils/cn';
 
 // Mock data specific for this widget to demonstrate features
 const MOCK_UPCOMING = [
@@ -54,7 +55,7 @@ interface UpcomingExpensesWidgetProps {
 export function UpcomingExpensesWidget({ onAddExpense }: UpcomingExpensesWidgetProps) {
     const [expenses, setExpenses] = useState(MOCK_UPCOMING);
     const [currentPage, setCurrentPage] = useState(0);
-    const itemsPerPage = 7;
+    const itemsPerPage = 5;
 
     const handlePay = (id: string) => {
         // Optimistic update
@@ -160,7 +161,7 @@ export function UpcomingExpensesWidget({ onAddExpense }: UpcomingExpensesWidgetP
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-                <div className="flex items-center justify-end gap-2 mt-6 pt-4 border-t border-secondary-50/50">
+                <div className="flex items-center justify-between gap-2 mt-auto pt-4 border-t border-secondary-50/50">
                     <button
                         onClick={prevPage}
                         disabled={currentPage === 0}
@@ -168,9 +169,19 @@ export function UpcomingExpensesWidget({ onAddExpense }: UpcomingExpensesWidgetP
                     >
                         <ChevronLeft size={20} />
                     </button>
-                    <span className="text-sm font-medium text-secondary">
-                        {currentPage + 1} / {totalPages}
-                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                        {Array.from({ length: totalPages }).map((_, i) => (
+                            <div
+                                key={i}
+                                className={cn(
+                                    "w-1.5 h-1.5 rounded-full transition-all",
+                                    i === currentPage ? "bg-secondary w-3" : "bg-gray-300"
+                                )}
+                            />
+                        ))}
+                    </div>
+
                     <button
                         onClick={nextPage}
                         disabled={currentPage === totalPages - 1}

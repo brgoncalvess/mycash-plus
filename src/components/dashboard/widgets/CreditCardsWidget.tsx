@@ -29,7 +29,7 @@ export function CreditCardsWidget({ onAddCard }: CreditCardsWidgetProps) {
     return (
         <section className="bg-white border border-secondary-50 rounded-[32px] p-8 flex flex-col shadow-sm h-[518px]">
             {/* Header */}
-            <div className="flex items-center justify-between mb-6 shrink-0">
+            <div className="flex items-center justify-between mb-4 shrink-0">
                 <div className="flex items-center gap-3">
                     <CreditCardIcon size={24} className="text-secondary" />
                     <h2 className="text-xl font-bold text-secondary">
@@ -66,12 +66,12 @@ export function CreditCardsWidget({ onAddCard }: CreditCardsWidgetProps) {
 
             {/* List */}
             {cards.length > 0 && (
-                <div className="flex-1 flex flex-col gap-5 overflow-hidden">
+                <div className="flex-1 flex flex-col gap-3 overflow-hidden">
                     {displayedCards.map((card) => (
                         <div
                             key={card.id}
                             onClick={() => setSelectedCardId(card.id)}
-                            className="group cursor-pointer flex flex-col gap-1 transition-opacity hover:opacity-80 pb-4 border-b border-dashed border-gray-100 last:border-0 last:pb-0"
+                            className="group cursor-pointer flex flex-col gap-0.5 transition-opacity hover:opacity-80 pb-3 border-b border-dashed border-gray-100 last:border-0 last:pb-0"
                         >
                             {/* Top Row: Logo, Name, Last4 */}
                             <div className="flex items-center justify-between mb-1">
