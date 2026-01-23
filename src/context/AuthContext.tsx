@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { supabase } from '../lib/supabase';
 
 interface User {
     id: string;
@@ -11,8 +12,9 @@ interface User {
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
-    login: (email: string) => Promise<void>;
-    logout: () => void;
+    login: (email: string, password: string) => Promise<{ error: any }>;
+    signUp: (email: string, password: string, name: string) => Promise<{ error: any }>;
+    logout: () => Promise<void>;
     isLoading: boolean;
 }
 
@@ -23,37 +25,104 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Check localStorage on mount
-        const storedUser = localStorage.getItem('auth_user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-        setIsLoading(false);
+        // Check active session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session?.user) {
+                // Fetch profile extra data
+                fetchProfile(session.user.id, session.user.email!);
+            } else {
+                setIsLoading(false);
+            }
+        });
+
+        // Listen for changes
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            if (session?.user) {
+                fetchProfile(session.user.id, session.user.email!);
+            } else {
+                setUser(null);
+                setIsLoading(false);
+            }
+        });
+
+        return () => subscription.unsubscribe();
     }, []);
 
-    const login = async (email: string) => {
-        setIsLoading(true);
-        // Mock Login Delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+    const fetchProfile = async (userId: string, email: string) => {
+        try {
+            const { data } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', userId)
+                .single();
 
-        // Mock User Data based on email (or just generic)
-        const mockUser: User = {
-            id: '1',
-            name: 'Ana Silva', // Matching the Figma mock name
-            email: email,
-            avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop',
-            role: 'Admin'
-        };
-
-        setUser(mockUser);
-        localStorage.setItem('auth_user', JSON.stringify(mockUser));
-        setIsLoading(false);
+            if (data) {
+                setUser({
+                    id: data.id,
+                    name: data.name,
+                    email: data.email,
+                    avatarUrl: data.avatar_url,
+                    role: data.role
+                });
+            } else {
+                // Fallback if profile doesn't exist yet (should trigger on signup but sometimes race condition)
+                setUser({
+                    id: userId,
+                    name: email.split('@')[0],
+                    email: email,
+                    role: 'Novo Membro'
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const logout = () => {
+    const login = async (email: string, password: string) => {
+        setIsLoading(true);
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+        if (signInError) setIsLoading(false);
+        return { error: signInError };
+    };
+
+    const signUp = async (email: string, password: string, name: string) => {
+        setIsLoading(true);
+        const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+                data: {
+                    displayName: name,
+                }
+            }
+        });
+
+        if (!error && data.user) {
+            // Create Profile
+            const { error: profileError } = await supabase.from('profiles').insert({
+                id: data.user.id,
+                email: email,
+                name: name,
+                role: 'Membro',
+                avatar_url: `https://ui-avatars.com/api/?name=${name}&background=random`
+            });
+            if (profileError) console.error('Profile creation error:', profileError);
+        }
+
+        if (error) setIsLoading(false);
+        return { error };
+    };
+
+    const logout = async () => {
+        await supabase.auth.signOut();
         setUser(null);
-        localStorage.removeItem('auth_user');
-        // Clear potential other data if needed, but keeping finance data for demo persistence is fine
     };
 
     return (
@@ -61,6 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             user,
             isAuthenticated: !!user,
             login,
+            signUp,
             logout,
             isLoading
         }}>

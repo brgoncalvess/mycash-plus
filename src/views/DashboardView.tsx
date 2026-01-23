@@ -10,11 +10,24 @@ import { NewTransactionModal } from '../components/dashboard/transactions/NewTra
 import { AddCardModal } from '../components/dashboard/members/AddCardModal';
 import { AddMemberModal } from '../components/dashboard/members/AddMemberModal';
 
+import { useFinance } from '../context/FinanceContext';
+import { Loader2 } from 'lucide-react';
+
 export function DashboardView() {
+    const { isLoading } = useFinance();
+
     // Shared Modal States
     const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
     const [isCardModalOpen, setIsCardModalOpen] = useState(false);
     const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
+
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <Loader2 className="animate-spin text-brand" size={48} />
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col gap-6 pb-20 animate-in fade-in duration-500">

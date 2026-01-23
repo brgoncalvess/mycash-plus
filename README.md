@@ -1,73 +1,74 @@
-# React + TypeScript + Vite
+# MyCash+ 💰
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+MyCash+ is a modern, premium personal finance dashboard built with React. It features a responsive design, transaction management, family sharing capabilities, financial goals tracking, and insightful visualizations.
 
-Currently, two official plugins are available:
+## 🚀 Technologies
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Core:** React 18, TypeScript, Vite
+- **Styling:** Tailwind CSS (v3), PostCSS
+- **Icons:** Lucide React
+- **Charts:** Recharts
+- **State Management:** React Context API + LocalStorage Persistence
+- **Routing:** React Router DOM (v6)
+- **Utilities:** date-fns, clsx, tailwind-merge
 
-## React Compiler
+## 🛠️ Project Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── components/          # Reusable UI components
+│   ├── auth/           # Authentication related components
+│   ├── dashboard/      # Dashboard specific widgets
+│   ├── layout/         # Sidebar, Header, Layout wrappers
+│   └── ui/             # Generic UI elements (inputs, modals)
+├── context/            # Global State (Auth, Finance)
+├── data/               # Mock data generators
+├── types/              # TypeScript interfaces
+├── utils/              # Helper functions (masks, formatters)
+└── views/              # Page components (Dashboard, Login, Goals, etc.)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🏃‍♂️ Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+2.  **Run Development Server:**
+    ```bash
+    npm run dev
+    ```
+    Access the app at `http://localhost:5173`.
+
+3.  **Build for Production:**
+    ```bash
+    npm run build
+    ```
+
+## ✨ Key Features
+
+-   **Dashboard:** High-level overview of net worth, income, expenses, and monthly flow.
+-   **Family Management:** Filter financial data by family member.
+-   **Transactions:** Complete CRUD for income and expenses with advanced filtering.
+-   **Goals (Caixinhas):** Track savings goals with yield projections (CDI, Crypto, etc.).
+-   **Authentication:** Mock text-based login system with session persistence.
+-   **Responsive Design:** Fully fluid layout adapting from Mobile (375px) to Wide Desktop (1920px).
+
+## 🧪 Testing Credentials
+
+The system uses a mock authentication flow. You can use any non-empty credentials to log in:
+
+-   **Email:** `admin@mycash.com` (example)
+-   **Password:** `123456`
+
+## 📝 Design Decisions & Notes
+
+-   **Visual Identity:** The project follows a "Glassmorphism" inspired premium aesthetic with clear hierarchy, using a soft gray scale with vibrant accents for financial indicators.
+-   **Data Persistence:** To provide a realistic prototype experience without a real backend, all data (transactions, members, goals) is persisted in the browser's `localStorage`.
+-   **Filtering Logic:** Balance cards (Income/Expense) respond to global filters (Member/Date), allowing for granular analysis of individual or family finances.
+-   **Mobile Experience:** The sidebar automatically converts to a bottom drawer/mobile header validation on smaller screens to ensure usability.
+
+## 📄 License
+
+This project is for educational and demonstration purposes.

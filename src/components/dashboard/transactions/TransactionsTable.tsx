@@ -116,13 +116,13 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                 <table className="w-full min-w-[1000px]">
                     <thead>
                         <tr className="text-left border-b border-gray-100">
-                            <th className="pb-4 pl-6 text-xs font-bold text-gray-400 uppercase tracking-wider w-[80px]">Membro</th>
-                            <th className="pb-4 text-xs font-bold text-gray-400 uppercase tracking-wider w-[120px]">Data</th>
-                            <th className="pb-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Descrição</th>
-                            <th className="pb-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Categoria</th>
-                            <th className="pb-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Conta/Cartão</th>
-                            <th className="pb-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-center">Parcelas</th>
-                            <th className="pb-4 pr-6 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Valor</th>
+                            <th className="pb-6 pl-8 text-xs font-bold text-gray-400 uppercase tracking-wider w-[80px]">Membro</th>
+                            <th className="pb-6 text-xs font-bold text-gray-400 uppercase tracking-wider w-[120px]">Data</th>
+                            <th className="pb-6 text-xs font-bold text-gray-400 uppercase tracking-wider">Descrição</th>
+                            <th className="pb-6 text-xs font-bold text-gray-400 uppercase tracking-wider">Categoria</th>
+                            <th className="pb-6 text-xs font-bold text-gray-400 uppercase tracking-wider">Conta/Cartão</th>
+                            <th className="pb-6 text-xs font-bold text-gray-400 uppercase tracking-wider text-center">Parcelas</th>
+                            <th className="pb-6 pr-8 text-xs font-bold text-gray-400 uppercase tracking-wider text-right">Valor</th>
                         </tr>
                     </thead>
                     <tbody className="text-sm">
@@ -139,18 +139,18 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
 
                                 return (
                                     <tr key={transaction.id} className="group hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-none">
-                                        <td className="py-4 px-6">
-                                            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100 border border-gray-200">
+                                        <td className="py-6 px-8">
+                                            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 border border-gray-200 shadow-sm">
                                                 {member?.avatarUrl ? (
                                                     <img src={member.avatarUrl} alt={member.name} className="w-full h-full object-cover" />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                                        <User size={14} />
+                                                        <User size={16} />
                                                     </div>
                                                 )}
                                             </div>
                                         </td>
-                                        <td className="py-4 text-gray-600 font-medium">
+                                        <td className="py-6 text-gray-600 font-medium">
                                             {(() => {
                                                 try {
                                                     return format(parseISO(transaction.date), 'dd/MM/yyyy');
@@ -159,7 +159,7 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                                 }
                                             })()}
                                         </td>
-                                        <td className="py-4">
+                                        <td className="py-6">
                                             <div className="flex items-center gap-3">
                                                 <div className={cn(
                                                     "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
@@ -176,21 +176,21 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="py-4">
+                                        <td className="py-6">
                                             <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-gray-100 text-gray-600">
                                                 {transaction.category}
                                             </span>
                                         </td>
-                                        <td className="py-4 text-gray-500 text-sm">
+                                        <td className="py-6 text-gray-500 text-sm">
                                             {getAccountOrCardName(transaction.accountId)}
                                         </td>
-                                        <td className="py-4 text-center text-gray-400 font-medium">
+                                        <td className="py-6 text-center text-gray-400 font-medium">
                                             {transaction.installments && transaction.installments > 1
                                                 ? `${transaction.installments}x`
                                                 : '-'}
                                         </td>
                                         <td className={cn(
-                                            "py-4 pr-6 text-right font-bold text-base",
+                                            "py-6 pr-8 text-right font-bold text-base",
                                             isIncome ? "text-green-600" : "text-gray-900"
                                         )}>
                                             {isIncome ? '+' : '-'} {transaction.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }).replace('R$', '').trim()}
@@ -206,7 +206,7 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
 
             {/* Pagination Footer */}
             {totalItems > 0 && (
-                <div className="flex items-center justify-between pt-4">
+                <div className="flex items-center justify-between pt-6 border-t border-gray-50 mt-2">
                     <p className="text-base font-bold text-secondary">
                         Mostrando {startIndex + 1} a {endIndex} de {totalItems}
                     </p>

@@ -9,6 +9,7 @@ export interface Transaction {
     category: string;
     date: string; // ISO 8601
     accountId: string;
+    cardId?: string;
     memberId?: string; // Optional for family-shared
     installments?: number; // 1 = instant
     status: TransactionStatus;
