@@ -18,8 +18,24 @@ export function ExpensesByCategoryCarousel() {
     const { calculateExpensesByCategory, calculateCategoryPercentage } = useFinance();
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [showArrows, setShowArrows] = useState(false);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(false);
 
     const expensesByCategory = calculateExpensesByCategory();
+
+    // Check scroll position
+    const checkScroll = () => {
+        if (scrollContainerRef.current) {
+            const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+            setCanScrollLeft(scrollLeft > 0);
+            setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+        }
+    };
+
+    // Check on mount and when data changes
+    useState(() => {
+        checkScroll();
+    });
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollContainerRef.current) {
@@ -55,7 +71,7 @@ export function ExpensesByCategoryCarousel() {
             onMouseLeave={() => setShowArrows(false)}
         >
             {/* Left Arrow */}
-            {showArrows && (
+            {showArrows && canScrollLeft && (
                 <button
                     onClick={() => scroll('left')}
                     className="hidden lg:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center bg-surface border border-secondary-50 rounded-full shadow-card hover:bg-background transition-all"
@@ -68,7 +84,12 @@ export function ExpensesByCategoryCarousel() {
             <div
                 ref={scrollContainerRef}
                 onWheel={handleWheel}
+                onScroll={checkScroll}
                 className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-2"
+                style={{
+                    maskImage: 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)',
+                    WebkitMaskImage: 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)',
+                }}
             >
                 {expensesByCategory.map((expense, index) => {
                     const percentage = calculateCategoryPercentage(expense.category);
@@ -87,7 +108,7 @@ export function ExpensesByCategoryCarousel() {
             </div>
 
             {/* Right Arrow */}
-            {showArrows && (
+            {showArrows && canScrollRight && (
                 <button
                     onClick={() => scroll('right')}
                     className="hidden lg:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 items-center justify-center bg-surface border border-secondary-50 rounded-full shadow-card hover:bg-background transition-all"
