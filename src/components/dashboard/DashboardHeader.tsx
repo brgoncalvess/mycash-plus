@@ -5,8 +5,7 @@ import { cn } from '../../utils/cn';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { FiltersMobileModal } from './filters/FiltersMobileModal';
-import { DateRangePickerModal } from '../ui/DateRangePickerModal';
-import type { DateRange } from 'react-day-picker';
+import { DateRangePopover } from './filters/DateRangePopover';
 
 interface DashboardHeaderProps {
     onNewTransaction: () => void;
@@ -17,7 +16,7 @@ export function DashboardHeader({ onNewTransaction, onAddMember }: DashboardHead
     const { filters, setFilters, members } = useFinance();
     const [showFilters, setShowFilters] = useState(false);
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
-    const [isDateModalOpen, setIsDateModalOpen] = useState(false);
+    const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false);
     const [searchValue, setSearchValue] = useState(filters.searchQuery);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,14 +38,15 @@ export function DashboardHeader({ onNewTransaction, onAddMember }: DashboardHead
         }
     };
 
-    const handleDateRangeApply = (range: DateRange | undefined) => {
-        if (range?.from && range?.to) {
+    const handleDateRangeApply = (range: { from: Date; to: Date | undefined }) => {
+        if (range.from && range.to) {
             setFilters({
                 dateRange: {
                     start: range.from,
                     end: range.to
                 }
             });
+            setIsDatePopoverOpen(false);
         }
     };
 
@@ -88,19 +88,27 @@ export function DashboardHeader({ onNewTransaction, onAddMember }: DashboardHead
                         <SlidersHorizontal size={18} />
                     </button>
 
-                    {/* Date Navigation (Date Range Picker) */}
-                    <button
-                        onClick={() => setIsDateModalOpen(true)}
-                        className="flex items-center gap-2 bg-surface hover:bg-background border border-secondary-50 hover:border-brand/30 rounded-full shadow-sm h-12 px-5 transition-all group"
-                    >
-                        <Calendar size={18} className="text-secondary group-hover:text-brand-dark transition-colors" />
-                        <span className="text-sm font-bold text-secondary hidden sm:inline-block">
-                            {format(filters.dateRange.start, 'dd MMM', { locale: ptBR })} - {format(filters.dateRange.end, 'dd MMM yyyy', { locale: ptBR })}
-                        </span>
-                        <span className="text-sm font-bold text-secondary sm:hidden">
-                            {format(filters.dateRange.start, 'MMM/yy', { locale: ptBR })}
-                        </span>
-                    </button>
+                    {/* Date Navigation with Popover */}
+                    <div className="relative">
+                        <button
+                            onClick={() => setIsDatePopoverOpen(!isDatePopoverOpen)}
+                            className="flex items-center justify-between bg-surface hover:bg-background border border-secondary-50 hover:border-brand/30 rounded-full shadow-sm h-12 px-5 transition-all group w-[300px]"
+                        >
+                            <div className="flex items-center gap-2">
+                                <Calendar size={18} className="text-secondary group-hover:text-brand-dark transition-colors" />
+                                <span className="text-sm font-bold text-secondary truncate">
+                                    {format(filters.dateRange.start, 'dd MMM', { locale: ptBR })} - {format(filters.dateRange.end, 'dd MMM yyyy', { locale: ptBR })}
+                                </span>
+                            </div>
+                        </button>
+
+                        <DateRangePopover
+                            isOpen={isDatePopoverOpen}
+                            onClose={() => setIsDatePopoverOpen(false)}
+                            initialRange={{ start: filters.dateRange.start, end: filters.dateRange.end }}
+                            onApply={handleDateRangeApply}
+                        />
+                    </div>
 
                     {/* Family Members Stack */}
                     <div className="flex items-center -space-x-3 ml-2">
@@ -201,13 +209,7 @@ export function DashboardHeader({ onNewTransaction, onAddMember }: DashboardHead
                 onClose={() => setIsMobileFiltersOpen(false)}
             />
 
-            {/* Date Range Picker Modal */}
-            <DateRangePickerModal
-                isOpen={isDateModalOpen}
-                onClose={() => setIsDateModalOpen(false)}
-                initialDateRange={{ from: filters.dateRange.start, to: filters.dateRange.end }}
-                onApply={handleDateRangeApply}
-            />
+            {/* Removed Date Range Picker Modal component */}
         </div>
     );
 }
