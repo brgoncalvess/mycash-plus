@@ -95,11 +95,11 @@ export function CardsView() {
                                     <div className="flex items-center gap-3">
                                         <div className={cn(
                                             "w-12 h-12 rounded-xl flex items-center justify-center shadow-inner shrink-0",
-                                            (card as any).logoUrl ? "bg-white p-1" : themeStyles.icon
+                                            card.logoUrl ? "bg-white p-1" : themeStyles.icon
                                         )}>
-                                            {(card as any).logoUrl ? (
+                                            {card.logoUrl ? (
                                                 <img
-                                                    src={(card as any).logoUrl}
+                                                    src={card.logoUrl}
                                                     alt={card.name}
                                                     className="w-full h-full object-contain"
                                                 />

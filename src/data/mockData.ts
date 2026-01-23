@@ -42,7 +42,7 @@ export const MOCK_CARDS: CreditCard[] = [
         currentInvoice: 4500.20,
         theme: 'black',
         last4Digits: '8834',
-        logoUrl: 'https://logo.clearbit.com/nubank.com.br'
+        logoUrl: '/assets/logos/nubank.png'
     },
     {
         id: 'cd2',
@@ -53,7 +53,7 @@ export const MOCK_CARDS: CreditCard[] = [
         currentInvoice: 1250.00,
         theme: 'black', // Using black theme for premium feel
         last4Digits: '1290',
-        logoUrl: 'https://logo.clearbit.com/xpi.com.br'
+        logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Xp-investimentos-logo-vector-branding-livre.png'
     },
     {
         id: 'cd3',
@@ -64,7 +64,7 @@ export const MOCK_CARDS: CreditCard[] = [
         currentInvoice: 890.90,
         theme: 'white', // Changed to white for variety
         last4Digits: '9921',
-        logoUrl: 'https://logo.clearbit.com/bancointer.com.br'
+        logoUrl: '/assets/logos/inter.png'
     }
 ];
 

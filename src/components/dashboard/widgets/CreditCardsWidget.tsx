@@ -92,11 +92,11 @@ export function CreditCardsWidget({ onAddCard }: CreditCardsWidgetProps) {
                                 {/* Icon Block */}
                                 <div className={cn(
                                     "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-inner overflow-hidden",
-                                    (card as any).logoUrl ? "bg-white p-1" : getThemeColors(card.theme)
+                                    card.logoUrl ? "bg-white p-1" : getThemeColors(card.theme)
                                 )}>
-                                    {(card as any).logoUrl ? (
+                                    {card.logoUrl ? (
                                         <img
-                                            src={(card as any).logoUrl}
+                                            src={card.logoUrl}
                                             alt={card.name}
                                             className="w-full h-full object-contain"
                                             onError={(e) => {
@@ -108,7 +108,7 @@ export function CreditCardsWidget({ onAddCard }: CreditCardsWidgetProps) {
                                         <CreditCardIcon size={20} />
                                     )}
                                     {/* Fallback icon if image fails (hidden by default if image exists) */}
-                                    {(card as any).logoUrl && <CreditCardIcon size={20} className="hidden text-gray-400" />}
+                                    {card.logoUrl && <CreditCardIcon size={20} className="hidden text-gray-400" />}
                                 </div>
 
                                 {/* Info */}
