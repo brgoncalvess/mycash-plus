@@ -64,9 +64,13 @@ export function UpcomingExpensesWidget({ onAddExpense }: UpcomingExpensesWidgetP
         });
     };
 
-    const sortedExpenses = [...expenses].sort((a, b) =>
-        new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
-    );
+    const sortedExpenses = [...expenses].sort((a, b) => {
+        try {
+            return parseISO(a.dueDate).getTime() - parseISO(b.dueDate).getTime();
+        } catch {
+            return 0;
+        }
+    });
 
     const totalPages = Math.ceil(sortedExpenses.length / itemsPerPage);
     const paginatedExpenses = sortedExpenses.slice(
@@ -118,7 +122,14 @@ export function UpcomingExpensesWidget({ onAddExpense }: UpcomingExpensesWidgetP
                                         {expense.description}
                                     </span>
                                     <span className="text-sm font-semibold text-secondary">
-                                        Vence dia {format(parseISO(expense.dueDate), 'dd/MM')}
+                                        {(() => {
+                                            try {
+                                                const date = parseISO(expense.dueDate);
+                                                return `Vence dia ${format(date, 'dd/MM')}`;
+                                            } catch {
+                                                return expense.dueDate;
+                                            }
+                                        })()}
                                     </span>
                                     <span className="text-xs font-normal text-secondary/70 mt-1">
                                         {expense.source.type === 'credit'

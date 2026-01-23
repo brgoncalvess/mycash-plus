@@ -151,26 +151,20 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                             </div>
                                         </td>
                                         <td className="py-5 text-gray-600">
-                                            {format(parseISO(transaction.date), 'dd/MM/yyyy')}
+                                            {(() => {
+                                                try {
+                                                    return format(parseISO(transaction.date), 'dd/MM/yyyy');
+                                                } catch {
+                                                    return transaction.date;
+                                                }
+                                            })()}
                                         </td>
                                         <td className="py-5">
                                             <div className="flex items-center gap-2">
                                                 {isIncome ? (
-                                                    <ArrowUp size={14} className="text-red-500 rotate-180" strokeWidth={3} /> // Design uses red arrow down for expense?? No, screenshot shows red arrow UP meaning Expense? Wait.
-                                                    // Screenshot: Red arrow pointing UP for "Conta de água". Red arrow UP usually means money LEAVING (Expense).
-                                                    // Green arrow DOWN usually means money ENTERING (Income).
-                                                    // Let's mimic screenshot: Red arrow Up for Expense.
-                                                    // Oh wait, standard is usually Arrow UP = Income (Green), Arrow Down = Expense (Red).
-                                                    // BUT in screenshot "Conta de água" has Red Arrow Pointing UP.
-                                                    // Let's follow screenshot: Red Arrow UP.
+                                                    <ArrowUp size={14} className="text-green-500" strokeWidth={3} />
                                                 ) : (
-                                                    // Actually screenshot shows Red Arrow UP for "Conta de água" which is an Expense.
-                                                    null)}
-
-                                                {!isIncome ? (
-                                                    <ArrowUp size={14} className="text-red-500" strokeWidth={3} />
-                                                ) : (
-                                                    <ArrowDown size={14} className="text-green-500" strokeWidth={3} />
+                                                    <ArrowDown size={14} className="text-red-500" strokeWidth={3} />
                                                 )}
 
                                                 <span className="text-gray-600 font-medium">
@@ -186,9 +180,8 @@ export function TransactionsTable({ data, itemsPerPage = 5, hideHeader = false }
                                         </td>
                                         <td className="py-5 text-gray-600">
                                             {transaction.installments && transaction.installments > 1
-                                                ? `${transaction.installments}/???` // We don't track total installments in mock perfectly, assuming simplify
+                                                ? `${transaction.installments}x`
                                                 : '-'}
-                                            {transaction.installments ? transaction.installments : '-'}
                                         </td>
                                         <td className="py-5 text-right font-medium text-gray-600">
                                             {/* Screenshot shows just "R$ 100,00" in gray, no colors */}
