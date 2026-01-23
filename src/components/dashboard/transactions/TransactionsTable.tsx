@@ -141,7 +141,7 @@ export function TransactionsTable() {
             {/* Header with Controls */}
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <h2 className="text-xl font-bold text-secondary">
-                    Extrato detalhado
+                    Extrato Detalhado
                 </h2>
 
                 <div className="flex flex-col sm:flex-row items-stretch gap-3 w-full md:w-auto">
