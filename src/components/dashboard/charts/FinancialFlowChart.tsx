@@ -124,7 +124,7 @@ export function FinancialFlowChart() {
             {/* Chart */}
             <div className="flex-1 w-full h-full min-h-[350px]">
                 {Array.isArray(chartData) && chartData.length > 0 ? (
-                    <ResponsiveContainer width={500} height={500}>
+                    <ResponsiveContainer width="100%" height="100%">
                         <AreaChart
                             data={chartData}
                             margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
