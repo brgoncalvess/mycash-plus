@@ -5,6 +5,7 @@ import { cn } from '../utils/cn';
 import { AddCardModal } from '../components/dashboard/members/AddCardModal';
 import { CardDetailsModal } from '../components/dashboard/cards/CardDetailsModal';
 import { NewTransactionModal } from '../components/dashboard/transactions/NewTransactionModal';
+import { BankLogo } from '../components/ui/BankLogo';
 import type { CreditCard as CreditCardType } from '../types';
 
 export function CardsView() {
@@ -97,15 +98,12 @@ export function CardsView() {
                                             "w-12 h-12 rounded-xl flex items-center justify-center shadow-inner shrink-0",
                                             card.logoUrl ? "bg-white p-1" : themeStyles.icon
                                         )}>
-                                            {card.logoUrl ? (
-                                                <img
-                                                    src={card.logoUrl}
-                                                    alt={card.name}
-                                                    className="w-full h-full object-contain"
-                                                />
-                                            ) : (
-                                                <CreditCard size={24} />
-                                            )}
+                                            <BankLogo
+                                                src={card.logoUrl}
+                                                bankName={card.bankName || card.name}
+                                                alt={card.name}
+                                                className="w-full h-full"
+                                            />
                                         </div>
                                         <div>
                                             <h3 className="text-lg font-bold text-secondary leading-tight">{card.name}</h3>

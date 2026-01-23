@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
-import { X, Calendar, CreditCard, ChevronLeft, ChevronRight, Edit2, Save } from 'lucide-react';
+import { X, Calendar, ChevronLeft, ChevronRight, Edit2, Save } from 'lucide-react';
 import { useFinance } from '../../../context/FinanceContext';
 import { cn } from '../../../utils/cn';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { getBankLogo } from '../../../constants/banks';
+import { BankLogo } from '../../ui/BankLogo';
 
 interface CardDetailsModalProps {
     isOpen: boolean;
@@ -95,8 +95,6 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (usagePercentage / 100) * circumference;
 
-    const logoUrl = card.logoUrl || getBankLogo(card.bankName || card.name) || '';
-
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div
@@ -122,11 +120,12 @@ export function CardDetailsModal({ isOpen, onClose, cardId }: CardDetailsModalPr
                                 card.theme === 'lime' ? "bg-brand text-secondary" :
                                     "bg-white border text-secondary"
                         )}>
-                            {logoUrl ? (
-                                <img src={logoUrl} alt={card.name} className="w-full h-full object-contain p-1" />
-                            ) : (
-                                <CreditCard size={24} />
-                            )}
+                            <BankLogo
+                                src={card.logoUrl}
+                                bankName={card.bankName || card.name}
+                                alt={card.name}
+                                className="w-full h-full p-1"
+                            />
                         </div>
                         <div className="flex-1">
                             {isEditing ? (

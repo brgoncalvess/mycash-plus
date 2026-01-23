@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { CreditCard as CreditCardIcon, Plus, ArrowRight } from 'lucide-react';
+import { CreditCard as CreditCardIcon, Plus, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useFinance } from '../../../context/FinanceContext';
 import { CardDetailsModal } from '../cards/CardDetailsModal';
+import { BankLogo } from '../../ui/BankLogo';
+import { cn } from '../../../utils/cn';
 
 interface CreditCardsWidgetProps {
     onAddCard?: () => void;
@@ -11,12 +13,23 @@ interface CreditCardsWidgetProps {
 export function CreditCardsWidget({ onAddCard }: CreditCardsWidgetProps) {
     const { cards } = useFinance();
     const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+    const [page, setPage] = useState(0);
     const navigate = useNavigate();
+
+    const ITEMS_PER_PAGE = 3;
+    const totalPages = Math.ceil(cards.length / ITEMS_PER_PAGE);
+
+    // Safety check just in case cards are deleted and page is out of bounds
+    if (page >= totalPages && totalPages > 0) {
+        setPage(Math.max(0, totalPages - 1));
+    }
+
+    const displayedCards = cards.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE);
 
     return (
         <section className="bg-white border border-secondary-50 rounded-[32px] p-8 flex flex-col shadow-sm h-[518px]">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-6 shrink-0">
                 <div className="flex items-center gap-3">
                     <CreditCardIcon size={24} className="text-secondary" />
                     <h2 className="text-xl font-bold text-secondary">
@@ -52,51 +65,84 @@ export function CreditCardsWidget({ onAddCard }: CreditCardsWidgetProps) {
             )}
 
             {/* List */}
-            <div className="flex flex-col gap-8">
-                {cards.map((card) => (
-                    <div
-                        key={card.id}
-                        onClick={() => setSelectedCardId(card.id)}
-                        className="group cursor-pointer flex flex-col gap-1 transition-opacity hover:opacity-80"
-                    >
-                        {/* Top Row: Logo, Name, Last4 */}
-                        <div className="flex items-center justify-between mb-1">
-                            <div className="flex items-center gap-3">
-                                {/* Logo */}
-                                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 overflow-hidden bg-gray-50">
-                                    {card.logoUrl ? (
-                                        <img
+            {cards.length > 0 && (
+                <div className="flex-1 flex flex-col gap-5 overflow-hidden">
+                    {displayedCards.map((card) => (
+                        <div
+                            key={card.id}
+                            onClick={() => setSelectedCardId(card.id)}
+                            className="group cursor-pointer flex flex-col gap-1 transition-opacity hover:opacity-80 pb-4 border-b border-dashed border-gray-100 last:border-0 last:pb-0"
+                        >
+                            {/* Top Row: Logo, Name, Last4 */}
+                            <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-3">
+                                    {/* Logo */}
+                                    <div className="w-8 h-8 rounded-lg shrink-0">
+                                        <BankLogo
                                             src={card.logoUrl}
+                                            bankName={card.bankName || card.name}
                                             alt={card.name}
-                                            className="w-full h-full object-contain"
+                                            className="rounded-lg"
                                         />
-                                    ) : (
-                                        <CreditCardIcon size={16} className="text-gray-400" />
-                                    )}
+                                    </div>
+                                    {/* Name */}
+                                    <span className="text-base text-gray-800 font-normal truncate max-w-[120px]">
+                                        {card.bankName || card.name.split(' ')[0]}
+                                    </span>
                                 </div>
-                                {/* Name */}
-                                <span className="text-base text-gray-800 font-normal">
-                                    {card.name.split(' ')[0]} {/* Simple brand name */}
+                                {/* Last 4 */}
+                                <span className="text-sm font-bold text-secondary">
+                                    **** {card.last4Digits || '0000'}
                                 </span>
                             </div>
-                            {/* Last 4 */}
-                            <span className="text-sm font-bold text-secondary">
-                                **** {card.last4Digits || '0000'}
-                            </span>
+
+                            {/* Amount */}
+                            <p className="text-3xl font-bold text-secondary tracking-tight">
+                                {card.currentInvoice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </p>
+
+                            {/* Due Date */}
+                            <p className="text-sm font-semibold text-secondary">
+                                Vence dia {card.dueDay}
+                            </p>
                         </div>
+                    ))}
+                </div>
+            )}
 
-                        {/* Amount */}
-                        <p className="text-3xl font-bold text-secondary tracking-tight">
-                            {card.currentInvoice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                        </p>
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+                <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-100 border-dashed shrink-0">
+                    <button
+                        onClick={() => setPage(p => Math.max(0, p - 1))}
+                        disabled={page === 0}
+                        className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-secondary"
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
 
-                        {/* Due Date */}
-                        <p className="text-sm font-semibold text-secondary">
-                            Vence dia {card.dueDay}
-                        </p>
+                    {/* Dots Indicator */}
+                    <div className="flex items-center gap-1.5">
+                        {Array.from({ length: totalPages }).map((_, i) => (
+                            <div
+                                key={i}
+                                className={cn(
+                                    "w-1.5 h-1.5 rounded-full transition-all",
+                                    i === page ? "bg-secondary w-3" : "bg-gray-300"
+                                )}
+                            />
+                        ))}
                     </div>
-                ))}
-            </div>
+
+                    <button
+                        onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                        disabled={page === totalPages - 1}
+                        className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-secondary"
+                    >
+                        <ChevronRight size={20} />
+                    </button>
+                </div>
+            )}
 
             {/* Modal */}
             <CardDetailsModal
