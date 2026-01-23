@@ -13,9 +13,10 @@ export default {
     extend: {
       colors: {
         brand: {
-          400: '#a3e635', // Primary Lime
-          DEFAULT: '#a3e635',
-          dark: '#65a30d',
+          400: '#D7FF00', // Primary Lime (Figma Primary-500)
+          500: '#D7FF00',
+          DEFAULT: '#D7FF00',
+          dark: '#c4e703', // Figma Brand-700
         },
         surface: {
           500: '#FFFFFF', // White
@@ -26,8 +27,9 @@ export default {
           DEFAULT: '#F5F6F8',
         },
         secondary: {
-          500: '#1A1A1A', // Dark Text
           50: '#E7E8EA',  // Light Border
+          500: '#1A1A1A', // Dark Text
+          900: '#060A11', // Figma Secondary-900
           DEFAULT: '#1A1A1A',
         }
       },

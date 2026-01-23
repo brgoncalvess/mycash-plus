@@ -1,10 +1,12 @@
-import { Search, SlidersHorizontal, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, SlidersHorizontal, Plus, Calendar } from 'lucide-react';
 import { useState } from 'react';
 import { useFinance } from '../../context/FinanceContext';
 import { cn } from '../../utils/cn';
-import { format, addMonths, subMonths, startOfMonth, endOfMonth } from 'date-fns';
+import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { FiltersMobileModal } from './filters/FiltersMobileModal';
+import { DateRangePickerModal } from '../ui/DateRangePickerModal';
+import type { DateRange } from 'react-day-picker';
 
 interface DashboardHeaderProps {
     onNewTransaction: () => void;
@@ -15,6 +17,7 @@ export function DashboardHeader({ onNewTransaction, onAddMember }: DashboardHead
     const { filters, setFilters, members } = useFinance();
     const [showFilters, setShowFilters] = useState(false);
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
+    const [isDateModalOpen, setIsDateModalOpen] = useState(false);
     const [searchValue, setSearchValue] = useState(filters.searchQuery);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,32 +39,18 @@ export function DashboardHeader({ onNewTransaction, onAddMember }: DashboardHead
         }
     };
 
-    // Date Navigation helpers
-    const currentMonth = filters.dateRange.start;
-
-    const nextMonth = () => {
-        const next = addMonths(currentMonth, 1);
-        setFilters({
-            dateRange: {
-                start: startOfMonth(next),
-                end: endOfMonth(next)
-            }
-        });
+    const handleDateRangeApply = (range: DateRange | undefined) => {
+        if (range?.from && range?.to) {
+            setFilters({
+                dateRange: {
+                    start: range.from,
+                    end: range.to
+                }
+            });
+        }
     };
 
-    const prevMonth = () => {
-        const prev = subMonths(currentMonth, 1);
-        setFilters({
-            dateRange: {
-                start: startOfMonth(prev),
-                end: endOfMonth(prev)
-            }
-        });
-    };
 
-    const dateLabel = format(currentMonth, 'MMMM yyyy', { locale: ptBR });
-    // Capitalize first letter
-    const formattedDateLabel = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
 
     return (
         <div className="relative w-full z-30">
@@ -99,24 +88,19 @@ export function DashboardHeader({ onNewTransaction, onAddMember }: DashboardHead
                         <SlidersHorizontal size={18} />
                     </button>
 
-                    {/* Date Navigation (Simple Month Picker) */}
-                    <div className="flex items-center bg-surface border border-secondary-50 rounded-full shadow-sm h-12 px-2">
-                        <button
-                            onClick={prevMonth}
-                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
-                        >
-                            <ChevronLeft size={16} />
-                        </button>
-                        <span className="px-3 text-sm font-bold text-secondary min-w-[120px] text-center select-none">
-                            {formattedDateLabel}
+                    {/* Date Navigation (Date Range Picker) */}
+                    <button
+                        onClick={() => setIsDateModalOpen(true)}
+                        className="flex items-center gap-2 bg-surface hover:bg-background border border-secondary-50 hover:border-brand/30 rounded-full shadow-sm h-12 px-5 transition-all group"
+                    >
+                        <Calendar size={18} className="text-secondary group-hover:text-brand-dark transition-colors" />
+                        <span className="text-sm font-bold text-secondary hidden sm:inline-block">
+                            {format(filters.dateRange.start, 'dd MMM', { locale: ptBR })} - {format(filters.dateRange.end, 'dd MMM yyyy', { locale: ptBR })}
                         </span>
-                        <button
-                            onClick={nextMonth}
-                            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
-                        >
-                            <ChevronRight size={16} />
-                        </button>
-                    </div>
+                        <span className="text-sm font-bold text-secondary sm:hidden">
+                            {format(filters.dateRange.start, 'MMM/yy', { locale: ptBR })}
+                        </span>
+                    </button>
 
                     {/* Family Members Stack */}
                     <div className="flex items-center -space-x-3 ml-2">
@@ -193,7 +177,7 @@ export function DashboardHeader({ onNewTransaction, onAddMember }: DashboardHead
                                     ].map((option) => (
                                         <button
                                             key={option.value}
-                                            onClick={() => handleTransactionTypeChange(option.value as any)}
+                                            onClick={() => handleTransactionTypeChange(option.value as 'all' | 'income' | 'expense')}
                                             className={cn(
                                                 "flex-1 px-4 py-2 rounded-lg text-xs font-bold transition-all",
                                                 filters.transactionType === option.value
@@ -215,6 +199,14 @@ export function DashboardHeader({ onNewTransaction, onAddMember }: DashboardHead
             <FiltersMobileModal
                 isOpen={isMobileFiltersOpen}
                 onClose={() => setIsMobileFiltersOpen(false)}
+            />
+
+            {/* Date Range Picker Modal */}
+            <DateRangePickerModal
+                isOpen={isDateModalOpen}
+                onClose={() => setIsDateModalOpen(false)}
+                initialDateRange={{ from: filters.dateRange.start, to: filters.dateRange.end }}
+                onApply={handleDateRangeApply}
             />
         </div>
     );
