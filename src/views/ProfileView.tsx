@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useFinance } from '../context/FinanceContext';
 import { cn } from '../utils/cn';
-import { User, Mail, DollarSign, LogOut, Plus, Edit2, Save, Lock, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, DollarSign, LogOut, Plus, Edit2, Save, Lock, Eye, EyeOff, Bell, Moon, Shield, Download, Trash2, HelpCircle, ChevronRight, Smartphone, Globe } from 'lucide-react';
 import { AddMemberModal } from '../components/dashboard/members/AddMemberModal';
 
 export function ProfileView() {
@@ -257,10 +257,115 @@ export function ProfileView() {
 
                 </div>
             ) : (
-                <div className="flex flex-col gap-8 animate-in slide-in-from-bottom-4 duration-500">
-                    {/* ... Settings Content (Keep same) ... */}
-                    <div className="p-8 bg-gray-50 rounded-3xl text-center text-gray-500">
-                        Configurações avançadas em breve.
+                <div className="flex flex-col gap-6 animate-in slide-in-from-bottom-4 duration-500">
+
+                    {/* General Settings */}
+                    <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                        <h3 className="text-lg font-bold text-secondary mb-4 flex items-center gap-2">
+                            <Globe size={20} className="text-brand" />
+                            Geral
+                        </h3>
+                        <div className="space-y-1">
+                            {/* Dark Mode */}
+                            <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-gray-100 p-2 rounded-lg text-gray-600">
+                                        <Moon size={18} />
+                                    </div>
+                                    <div className="flex flex-col text-left">
+                                        <span className="text-sm font-bold text-secondary">Tema Escuro</span>
+                                        <span className="text-xs text-gray-500">Ajustar aparência do app</span>
+                                    </div>
+                                </div>
+                                <div className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 cursor-pointer">
+                                    <span className="translate-x-1 inline-block h-4 w-4 transform rounded-full bg-white transition" />
+                                </div>
+                            </div>
+
+                            {/* Notifications */}
+                            <div className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-gray-100 p-2 rounded-lg text-gray-600">
+                                        <Bell size={18} />
+                                    </div>
+                                    <div className="flex flex-col text-left">
+                                        <span className="text-sm font-bold text-secondary">Notificações</span>
+                                        <span className="text-xs text-gray-500">Gerenciar alertas e avisos</span>
+                                    </div>
+                                </div>
+                                <div className="relative inline-flex h-6 w-11 items-center rounded-full bg-secondary cursor-pointer">
+                                    <span className="translate-x-6 inline-block h-4 w-4 transform rounded-full bg-white transition" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Security */}
+                    <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                        <h3 className="text-lg font-bold text-secondary mb-4 flex items-center gap-2">
+                            <Shield size={20} className="text-brand" />
+                            Segurança
+                        </h3>
+                        <div className="space-y-1">
+                            <button className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors group">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-gray-100 p-2 rounded-lg text-gray-600 group-hover:bg-brand group-hover:text-secondary transition-colors">
+                                        <Lock size={18} />
+                                    </div>
+                                    <span className="text-sm font-bold text-secondary">Alterar Senha</span>
+                                </div>
+                                <ChevronRight size={16} className="text-gray-400" />
+                            </button>
+                            <button className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors group">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-gray-100 p-2 rounded-lg text-gray-600 group-hover:bg-brand group-hover:text-secondary transition-colors">
+                                        <Smartphone size={18} />
+                                    </div>
+                                    <span className="text-sm font-bold text-secondary">Autenticação em 2 Fatores</span>
+                                </div>
+                                <div className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-md">Ativado</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Data & Privacy */}
+                    <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                        <h3 className="text-lg font-bold text-secondary mb-4 flex items-center gap-2">
+                            <Download size={20} className="text-brand" />
+                            Dados
+                        </h3>
+                        <div className="space-y-1">
+                            <button className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors group">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-gray-100 p-2 rounded-lg text-gray-600 group-hover:bg-brand group-hover:text-secondary transition-colors">
+                                        <Download size={18} />
+                                    </div>
+                                    <div className="flex flex-col text-left">
+                                        <span className="text-sm font-bold text-secondary">Exportar Dados</span>
+                                        <span className="text-xs text-gray-500">Baixar cópia em JSON</span>
+                                    </div>
+                                </div>
+                                <ChevronRight size={16} className="text-gray-400" />
+                            </button>
+                            <button className="w-full flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors group">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-gray-100 p-2 rounded-lg text-gray-600 group-hover:bg-brand group-hover:text-secondary transition-colors">
+                                        <HelpCircle size={18} />
+                                    </div>
+                                    <span className="text-sm font-bold text-secondary">Central de Ajuda</span>
+                                </div>
+                                <ChevronRight size={16} className="text-gray-400" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Danger Zone */}
+                    <div className="bg-red-50/50 rounded-3xl p-6 border border-red-100 mb-8">
+                        <h3 className="text-lg font-bold text-red-600 mb-4">Zona de Perigo</h3>
+                        <button className="w-full flex items-center gap-3 p-4 bg-white border border-red-100 rounded-xl text-red-500 hover:bg-red-50 hover:border-red-200 transition-all font-bold shadow-sm">
+                            <Trash2 size={18} />
+                            Excluir minha conta
+                        </button>
                     </div>
                 </div>
             )}

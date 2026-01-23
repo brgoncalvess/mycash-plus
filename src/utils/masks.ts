@@ -2,6 +2,8 @@ export const formatCurrencyMask = (value: string | number) => {
     // Convert to string and remove non-digits
     const numericValue = value.toString().replace(/\D/g, "");
 
+    if (!numericValue) return "";
+
     // Convert to float (cents)
     const floatValue = Number(numericValue) / 100;
 
@@ -13,6 +15,7 @@ export const formatCurrencyMask = (value: string | number) => {
 };
 
 export const parseCurrencyToNumber = (maskedValue: string): number => {
+    if (!maskedValue) return 0;
     const numericValue = maskedValue.replace(/\D/g, "");
     return Number(numericValue) / 100;
 };
