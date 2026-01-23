@@ -9,10 +9,10 @@ interface CategoryDonutCardProps {
 
 export function CategoryDonutCard({ category, amount, percentage, color }: CategoryDonutCardProps) {
     return (
-        <div className="flex-shrink-0 w-[185px] h-[184px] bg-white border border-secondary-50 rounded-[20px] p-6 flex flex-col items-center justify-center gap-3 hover:border-brand transition-all group">
+        <div className="flex-shrink-0 w-[220px] h-[210px] bg-white border border-secondary-50 rounded-[20px] p-5 flex flex-col items-center justify-center gap-3 hover:border-brand transition-all group">
             {/* Donut Chart */}
             <div className="flex justify-center">
-                <DonutChart percentage={percentage} color={color} size={72} />
+                <DonutChart percentage={percentage} color={color} size={76} />
             </div>
 
             {/* Content Group */}

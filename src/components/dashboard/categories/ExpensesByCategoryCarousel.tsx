@@ -23,7 +23,7 @@ export function ExpensesByCategoryCarousel() {
 
     const scroll = (direction: 'left' | 'right') => {
         if (scrollContainerRef.current) {
-            const scrollAmount = 201; // 185px card + 16px gap
+            const scrollAmount = 236; // 220px card + 16px gap
             scrollContainerRef.current.scrollBy({
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
                 behavior: 'smooth',
@@ -69,10 +69,6 @@ export function ExpensesByCategoryCarousel() {
                 ref={scrollContainerRef}
                 onWheel={handleWheel}
                 className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-2"
-                style={{
-                    maskImage: 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)',
-                    WebkitMaskImage: 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)',
-                }}
             >
                 {expensesByCategory.map((expense, index) => {
                     const percentage = calculateCategoryPercentage(expense.category);
