@@ -12,7 +12,7 @@ export function CreditCardsWidget({ onAddCard }: CreditCardsWidgetProps) {
     const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
 
     return (
-        <section className="bg-white border border-secondary-50 rounded-[32px] p-8 flex flex-col shadow-sm">
+        <section className="bg-white border border-secondary-50 rounded-[32px] p-8 flex flex-col shadow-sm h-[518px]">
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
