@@ -18,43 +18,51 @@ export function FinancialFlowChart() {
 
     // Generate last 12 months data
     const chartData = useMemo(() => {
-        const today = new Date();
-        const start = startOfMonth(subMonths(today, 11)); // 12 months including current
-        const end = endOfMonth(today);
+        try {
+            const today = new Date();
+            const start = startOfMonth(subMonths(today, 11));
+            const end = endOfMonth(today);
 
-        const monthsInterval = eachMonthOfInterval({ start, end });
+            const monthsInterval = eachMonthOfInterval({ start, end });
 
-        const data = monthsInterval.map(monthDate => {
-            const monthTransactions = transactions.filter(t => {
-                try {
-                    const tDate = parseISO(t.date);
-                    return isSameMonth(tDate, monthDate);
-                } catch (error) {
-                    console.error('Error parsing date:', t.date, error);
-                    return false;
-                }
+            if (!Array.isArray(transactions) || transactions.length === 0) {
+                return monthsInterval.map(monthDate => ({
+                    month: format(monthDate, 'MMM', { locale: ptBR }).toUpperCase(),
+                    income: 0,
+                    expense: 0,
+                }));
+            }
+
+            const data = monthsInterval.map(monthDate => {
+                const monthTransactions = transactions.filter(t => {
+                    try {
+                        const tDate = parseISO(t.date);
+                        return isSameMonth(tDate, monthDate);
+                    } catch {
+                        return false;
+                    }
+                });
+
+                const income = monthTransactions
+                    .filter(t => t.type === 'income')
+                    .reduce((acc, t) => acc + t.amount, 0);
+
+                const expense = monthTransactions
+                    .filter(t => t.type === 'expense')
+                    .reduce((acc, t) => acc + t.amount, 0);
+
+                return {
+                    month: format(monthDate, 'MMM', { locale: ptBR }).toUpperCase(),
+                    income,
+                    expense,
+                };
             });
 
-            const income = monthTransactions
-                .filter(t => t.type === 'income')
-                .reduce((acc, t) => acc + t.amount, 0);
-
-            const expense = monthTransactions
-                .filter(t => t.type === 'expense')
-                .reduce((acc, t) => acc + t.amount, 0);
-
-            return {
-                month: format(monthDate, 'MMM', { locale: ptBR }).toUpperCase(),
-                income,
-                expense,
-                originalDate: monthDate // for sorting/key if needed
-            };
-        });
-
-        console.log('Financial Flow Chart Data:', data);
-        console.log('Total transactions:', transactions.length);
-
-        return data;
+            return data;
+        } catch (error) {
+            console.error('Error generating chart data:', error);
+            return [];
+        }
     }, [transactions]);
 
     const formatCurrency = (value: number) => {
@@ -115,55 +123,61 @@ export function FinancialFlowChart() {
 
             {/* Chart */}
             <div className="flex-1 w-full min-h-0">
-                <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart
-                        data={chartData}
-                        margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-                    >
-                        <defs>
-                            <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#D7FF00" stopOpacity={0.3} />
-                                <stop offset="95%" stopColor="#D7FF00" stopOpacity={0} />
-                            </linearGradient>
-                            <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
-                                <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#F3F4F6" />
-                        <XAxis
-                            dataKey="month"
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fill: '#9CA3AF', fontSize: 12, fontWeight: 500 }}
-                            dy={10}
-                        />
-                        <YAxis
-                            axisLine={false}
-                            tickLine={false}
-                            tick={{ fill: '#9CA3AF', fontSize: 12, fontWeight: 500 }}
-                            tickFormatter={formatCurrency}
-                            dx={-10}
-                        />
-                        <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#E5E7EB', strokeWidth: 1, strokeDasharray: '4 4' }} />
-                        <Area
-                            type="monotone"
-                            dataKey="income"
-                            stroke="#D7FF00"
-                            strokeWidth={3}
-                            fillOpacity={1}
-                            fill="url(#colorIncome)"
-                        />
-                        <Area
-                            type="monotone"
-                            dataKey="expense"
-                            stroke="#ef4444" // red-500
-                            strokeWidth={3}
-                            fillOpacity={1}
-                            fill="url(#colorExpense)"
-                        />
-                    </AreaChart>
-                </ResponsiveContainer>
+                {Array.isArray(chartData) && chartData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                            data={chartData}
+                            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                        >
+                            <defs>
+                                <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#D7FF00" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#D7FF00" stopOpacity={0} />
+                                </linearGradient>
+                                <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#F3F4F6" />
+                            <XAxis
+                                dataKey="month"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fill: '#9CA3AF', fontSize: 12, fontWeight: 500 }}
+                                dy={10}
+                            />
+                            <YAxis
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fill: '#9CA3AF', fontSize: 12, fontWeight: 500 }}
+                                tickFormatter={formatCurrency}
+                                dx={-10}
+                            />
+                            <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#E5E7EB', strokeWidth: 1, strokeDasharray: '4 4' }} />
+                            <Area
+                                type="monotone"
+                                dataKey="income"
+                                stroke="#D7FF00"
+                                strokeWidth={3}
+                                fillOpacity={1}
+                                fill="url(#colorIncome)"
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="expense"
+                                stroke="#ef4444" // red-500
+                                strokeWidth={3}
+                                fillOpacity={1}
+                                fill="url(#colorExpense)"
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <div className="flex items-center justify-center h-full">
+                        <p className="text-gray-400 text-sm">Carregando dados do gráfico...</p>
+                    </div>
+                )}
             </div>
         </section>
     );
