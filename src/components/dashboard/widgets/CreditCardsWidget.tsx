@@ -4,9 +4,13 @@ import { useFinance } from '../../../context/FinanceContext';
 import { cn } from '../../../utils/cn';
 import type { CreditCard } from '../../../types';
 
+import { CardDetailsModal } from '../cards/CardDetailsModal';
+
 export function CreditCardsWidget() {
     const { cards } = useFinance();
     const [currentPage, setCurrentPage] = useState(0);
+    const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+
     const itemsPerPage = 3;
     const totalPages = Math.ceil(cards.length / itemsPerPage);
 
@@ -77,6 +81,7 @@ export function CreditCardsWidget() {
                         return (
                             <div
                                 key={card.id}
+                                onClick={() => setSelectedCardId(card.id)}
                                 className="group bg-surface rounded-xl p-4 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-pointer flex items-center gap-4 border border-transparent hover:border-secondary-50"
                             >
                                 {/* Icon Block */}
@@ -92,8 +97,6 @@ export function CreditCardsWidget() {
                                             onError={(e) => {
                                                 (e.target as HTMLImageElement).style.display = 'none';
                                                 (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-                                                // We can't easily revert parent class in React inline without state, 
-                                                // but for now the white bg for a fallback gray icon is acceptable or neutral.
                                             }}
                                         />
                                     ) : (
@@ -149,6 +152,13 @@ export function CreditCardsWidget() {
                     </button>
                 </div>
             )}
+
+            {/* Modal */}
+            <CardDetailsModal
+                isOpen={!!selectedCardId}
+                cardId={selectedCardId}
+                onClose={() => setSelectedCardId(null)}
+            />
         </section>
     );
 }
