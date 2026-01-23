@@ -5,11 +5,13 @@ import { cn } from '../../utils/cn';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { NewTransactionModal } from './transactions/NewTransactionModal';
+import { AddMemberModal } from './members/AddMemberModal';
 
 export function DashboardHeader() {
     const { filters, setFilters, members } = useFinance();
     const [showFilters, setShowFilters] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
+    const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
     const [searchValue, setSearchValue] = useState(filters.searchQuery);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,7 +103,10 @@ export function DashboardHeader() {
                             );
                         })}
 
-                        <button className="w-11 h-11 rounded-full bg-gray-100 border-2 border-surface flex items-center justify-center hover:bg-gray-200 transition-all text-secondary z-0">
+                        <button
+                            onClick={() => setIsMemberModalOpen(true)}
+                            className="w-11 h-11 rounded-full bg-gray-100 border-2 border-surface flex items-center justify-center hover:bg-gray-200 transition-all text-secondary z-0"
+                        >
                             <Plus size={20} />
                         </button>
                     </div>
@@ -110,7 +115,7 @@ export function DashboardHeader() {
                 {/* Right Group: New Transaction */}
                 <div className="flex items-center lg:ml-auto">
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => setIsTransactionModalOpen(true)}
                         className="flex items-center justify-center gap-2 h-12 px-8 bg-secondary text-surface rounded-full text-base font-bold hover:bg-secondary/90 transition-all shadow-md active:scale-95 group w-full lg:w-auto"
                     >
                         <Plus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
@@ -161,8 +166,14 @@ export function DashboardHeader() {
 
             {/* Transaction Modal */}
             <NewTransactionModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                isOpen={isTransactionModalOpen}
+                onClose={() => setIsTransactionModalOpen(false)}
+            />
+
+            {/* Member Modal */}
+            <AddMemberModal
+                isOpen={isMemberModalOpen}
+                onClose={() => setIsMemberModalOpen(false)}
             />
         </div>
     );

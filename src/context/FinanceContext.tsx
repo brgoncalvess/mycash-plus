@@ -50,6 +50,7 @@ interface FinanceContextType {
     calculateCategoryPercentage: (categoryName: string) => number;
     calculateSavingsRate: () => number;
     addCategory: (category: Omit<Category, 'id'>) => void;
+    addMember: (member: Omit<FamilyMember, 'id'>) => void;
 }
 
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
@@ -60,7 +61,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     const [goals, setGoals] = useState<FinanceGoal[]>(MOCK_GOALS);
     const [cards] = useState<CreditCard[]>(MOCK_CARDS);
     const [accounts] = useState<BankAccount[]>(MOCK_ACCOUNTS);
-    const [members] = useState<FamilyMember[]>(MOCK_MEMBERS);
+    const [members, setMembers] = useState<FamilyMember[]>(MOCK_MEMBERS);
     const [categories, setCategories] = useState<Category[]>(MOCK_CATEGORIES);
 
     const [filters, setFiltersState] = useState<GlobalFilters>({
@@ -78,6 +79,12 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     };
 
     // --- CRUD Actions ---
+
+    // Members
+    const addMember = (member: Omit<FamilyMember, 'id'>) => {
+        const newMember = { ...member, id: crypto.randomUUID() };
+        setMembers(prev => [...prev, newMember]);
+    };
 
     // Categories
     const addCategory = (category: Omit<Category, 'id'>) => {
@@ -232,7 +239,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             calculateExpensesByCategory,
             calculateCategoryPercentage,
             calculateSavingsRate,
-            addCategory
+            addCategory,
+            addMember
         }}>
             {children}
         </FinanceContext.Provider>
