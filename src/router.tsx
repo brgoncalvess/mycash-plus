@@ -9,6 +9,7 @@ import { UpcomingExpensesWidget } from './components/dashboard/widgets/UpcomingE
 import { TransactionsTable } from './components/dashboard/transactions/TransactionsTable';
 import { Sidebar } from './components/layout/Sidebar';
 import { MobileHeader } from './components/layout/MobileHeader';
+import { CardsView } from './views/CardsView';
 
 const Dashboard = () => (
     <div className="flex flex-col gap-6 pb-20">
@@ -46,7 +47,7 @@ const Dashboard = () => (
 );
 
 const Goals = () => <div className="p-4"></div>;
-const Cards = () => <div className="p-4"></div>;
+// CardsView is used directly
 const Transactions = () => <div className="p-4"></div>;
 const Profile = () => <div className="p-4"></div>;
 
@@ -86,7 +87,7 @@ export const router = createBrowserRouter([
             { path: '/', element: <Dashboard /> },
             { path: '/dashboard', element: <Dashboard /> },
             { path: '/goals', element: <Goals /> },
-            { path: '/cards', element: <Cards /> },
+            { path: '/cards', element: <CardsView /> },
             { path: '/transactions', element: <Transactions /> },
             { path: '/profile', element: <Profile /> },
         ],

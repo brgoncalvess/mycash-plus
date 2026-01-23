@@ -13,9 +13,10 @@ import type { TransactionType } from '../../../types';
 interface NewTransactionModalProps {
     isOpen: boolean;
     onClose: () => void;
+    initialAccountId?: string;
 }
 
-export function NewTransactionModal({ isOpen, onClose }: NewTransactionModalProps) {
+export function NewTransactionModal({ isOpen, onClose, initialAccountId }: NewTransactionModalProps) {
     const {
         addTransaction,
         categories,
@@ -61,7 +62,7 @@ export function NewTransactionModal({ isOpen, onClose }: NewTransactionModalProp
             setDescription('');
             setCategoryId('');
             setMemberId('');
-            setAccountId('');
+            setAccountId(initialAccountId || '');
             setInstallments(1);
             setIsRecurring(false);
             setErrors({});
