@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useFinance } from '../context/FinanceContext';
+import { useAuth } from '../context/AuthContext';
 import { cn } from '../utils/cn';
 import { User, Mail, DollarSign, LogOut, Plus, Edit2, Save, Lock, Eye, EyeOff, Bell, Moon, Shield, Download, Trash2, HelpCircle, ChevronRight, Smartphone, Globe } from 'lucide-react';
 import { AddMemberModal } from '../components/dashboard/members/AddMemberModal';
 
 export function ProfileView() {
+    const { logout } = useAuth();
     const { members, updateMember, deleteMember } = useFinance();
     const [activeTab, setActiveTab] = useState<'info' | 'settings'>('info');
     const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
@@ -264,7 +266,10 @@ export function ProfileView() {
 
                     {/* Logout Button */}
                     <div className="flex justify-center md:justify-start pt-4">
-                        <button className="flex items-center gap-2 text-red-500 font-bold hover:bg-red-50 px-6 py-3 rounded-xl transition-colors">
+                        <button
+                            onClick={logout}
+                            className="flex items-center gap-2 text-red-500 font-bold hover:bg-red-50 px-6 py-3 rounded-xl transition-colors"
+                        >
                             <LogOut size={20} />
                             Sair do Sistema
                         </button>

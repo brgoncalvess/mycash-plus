@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode, useMemo } from 'react';
 import type {
     Transaction,
     FinanceGoal,
@@ -63,13 +63,61 @@ interface FinanceContextType {
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
 
 export function FinanceProvider({ children }: { children: ReactNode }) {
-    // --- State Initialization with Mock Data ---
-    const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
-    const [goals, setGoals] = useState<FinanceGoal[]>(MOCK_GOALS);
-    const [cards, setCards] = useState<CreditCard[]>(MOCK_CARDS);
-    const [accounts, setAccounts] = useState<BankAccount[]>(MOCK_ACCOUNTS);
-    const [members, setMembers] = useState<FamilyMember[]>(MOCK_MEMBERS);
-    const [categories, setCategories] = useState<Category[]>(MOCK_CATEGORIES);
+    // --- State Initialization with LocalStorage Persistence ---
+    const [transactions, setTransactions] = useState<Transaction[]>(() => {
+        const saved = localStorage.getItem('finance_transactions');
+        return saved ? JSON.parse(saved) : MOCK_TRANSACTIONS;
+    });
+
+    const [goals, setGoals] = useState<FinanceGoal[]>(() => {
+        const saved = localStorage.getItem('finance_goals');
+        return saved ? JSON.parse(saved) : MOCK_GOALS;
+    });
+
+    const [cards, setCards] = useState<CreditCard[]>(() => {
+        const saved = localStorage.getItem('finance_cards');
+        return saved ? JSON.parse(saved) : MOCK_CARDS;
+    });
+
+    const [accounts, setAccounts] = useState<BankAccount[]>(() => {
+        const saved = localStorage.getItem('finance_accounts');
+        return saved ? JSON.parse(saved) : MOCK_ACCOUNTS;
+    });
+
+    const [members, setMembers] = useState<FamilyMember[]>(() => {
+        const saved = localStorage.getItem('finance_members');
+        return saved ? JSON.parse(saved) : MOCK_MEMBERS;
+    });
+
+    const [categories, setCategories] = useState<Category[]>(() => {
+        const saved = localStorage.getItem('finance_categories');
+        return saved ? JSON.parse(saved) : MOCK_CATEGORIES;
+    });
+
+    // --- Persistence Effects ---
+    useEffect(() => {
+        localStorage.setItem('finance_transactions', JSON.stringify(transactions));
+    }, [transactions]);
+
+    useEffect(() => {
+        localStorage.setItem('finance_goals', JSON.stringify(goals));
+    }, [goals]);
+
+    useEffect(() => {
+        localStorage.setItem('finance_cards', JSON.stringify(cards));
+    }, [cards]);
+
+    useEffect(() => {
+        localStorage.setItem('finance_accounts', JSON.stringify(accounts));
+    }, [accounts]);
+
+    useEffect(() => {
+        localStorage.setItem('finance_members', JSON.stringify(members));
+    }, [members]);
+
+    useEffect(() => {
+        localStorage.setItem('finance_categories', JSON.stringify(categories));
+    }, [categories]);
 
     const [filters, setFiltersState] = useState<GlobalFilters>({
         memberId: null,

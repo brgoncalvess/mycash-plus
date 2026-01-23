@@ -13,6 +13,8 @@ import { DashboardView } from './views/DashboardView';
 // ...
 
 import { GoalsView } from './views/GoalsView';
+import { LoginView } from './views/LoginView';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 // Layout Component
 function Layout() {
@@ -49,15 +51,24 @@ function Layout() {
 
 export const router = createBrowserRouter([
     {
+        path: '/login',
+        element: <LoginView />,
+    },
+    {
         path: '/',
-        element: <Layout />,
+        element: <ProtectedRoute />,
         children: [
-            { path: '/', element: <DashboardView /> },
-            { path: '/dashboard', element: <DashboardView /> },
-            { path: '/goals', element: <GoalsView /> },
-            { path: '/cards', element: <CardsView /> },
-            { path: '/transactions', element: <TransactionsView /> },
-            { path: '/profile', element: <ProfileView /> },
+            {
+                element: <Layout />,
+                children: [
+                    { path: '/', element: <DashboardView /> },
+                    { path: '/dashboard', element: <DashboardView /> },
+                    { path: '/goals', element: <GoalsView /> },
+                    { path: '/cards', element: <CardsView /> },
+                    { path: '/transactions', element: <TransactionsView /> },
+                    { path: '/profile', element: <ProfileView /> },
+                ]
+            }
         ],
     },
 ]);

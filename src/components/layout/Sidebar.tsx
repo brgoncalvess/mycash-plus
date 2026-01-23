@@ -8,7 +8,7 @@ import {
     ChevronLeft,
     ChevronRight,
 } from 'lucide-react';
-import { useFinance } from '../../context/FinanceContext';
+import { useAuth } from '../../context/AuthContext';
 import { cn } from '../../utils/cn';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -35,8 +35,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { members } = useFinance();
-    const user = members[0]; // Active user
+    const { user } = useAuth();
 
     // Check active path logic
     const isActive = (path: string) => {
