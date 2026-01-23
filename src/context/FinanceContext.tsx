@@ -51,6 +51,8 @@ interface FinanceContextType {
     calculateSavingsRate: () => number;
     addCategory: (category: Omit<Category, 'id'>) => void;
     addMember: (member: Omit<FamilyMember, 'id'>) => void;
+    addAccount: (account: Omit<BankAccount, 'id'>) => void;
+    addCard: (card: Omit<CreditCard, 'id'>) => void;
 }
 
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
@@ -59,8 +61,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     // --- State Initialization with Mock Data ---
     const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
     const [goals, setGoals] = useState<FinanceGoal[]>(MOCK_GOALS);
-    const [cards] = useState<CreditCard[]>(MOCK_CARDS);
-    const [accounts] = useState<BankAccount[]>(MOCK_ACCOUNTS);
+    const [cards, setCards] = useState<CreditCard[]>(MOCK_CARDS);
+    const [accounts, setAccounts] = useState<BankAccount[]>(MOCK_ACCOUNTS);
     const [members, setMembers] = useState<FamilyMember[]>(MOCK_MEMBERS);
     const [categories, setCategories] = useState<Category[]>(MOCK_CATEGORIES);
 
@@ -90,6 +92,18 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     const addCategory = (category: Omit<Category, 'id'>) => {
         const newCategory = { ...category, id: crypto.randomUUID() };
         setCategories(prev => [...prev, newCategory]);
+    };
+
+    // Accounts
+    const addAccount = (account: Omit<BankAccount, 'id'>) => {
+        const newAccount = { ...account, id: crypto.randomUUID() };
+        setAccounts(prev => [...prev, newAccount]);
+    };
+
+    // Cards
+    const addCard = (card: Omit<CreditCard, 'id'>) => {
+        const newCard = { ...card, id: crypto.randomUUID() };
+        setCards(prev => [...prev, newCard]);
     };
 
     // Transactions
@@ -240,7 +254,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             calculateCategoryPercentage,
             calculateSavingsRate,
             addCategory,
-            addMember
+            addMember,
+            addAccount,
+            addCard
         }}>
             {children}
         </FinanceContext.Provider>

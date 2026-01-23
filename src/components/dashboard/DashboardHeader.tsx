@@ -6,12 +6,14 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { NewTransactionModal } from './transactions/NewTransactionModal';
 import { AddMemberModal } from './members/AddMemberModal';
+import { AddCardModal } from './members/AddCardModal';
 
 export function DashboardHeader() {
     const { filters, setFilters, members } = useFinance();
     const [showFilters, setShowFilters] = useState(false);
     const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
     const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
+    const [isCardModalOpen, setIsCardModalOpen] = useState(false);
     const [searchValue, setSearchValue] = useState(filters.searchQuery);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -174,6 +176,12 @@ export function DashboardHeader() {
             <AddMemberModal
                 isOpen={isMemberModalOpen}
                 onClose={() => setIsMemberModalOpen(false)}
+            />
+
+            {/* Card Modal */}
+            <AddCardModal
+                isOpen={isCardModalOpen}
+                onClose={() => setIsCardModalOpen(false)}
             />
         </div>
     );
