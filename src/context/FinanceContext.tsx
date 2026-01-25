@@ -305,30 +305,6 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         toast.success(`Depósito de R$ ${amount} realizado!`);
     };
 
-    // Members, Accounts, Cards (Simplified for brevity, following same pattern)
-    // Providing empty implementations for CRUDs not strictly required in immediate test flow,
-    // but fully implementing Add Member for consistency.
-
-    const addMember = async (member: Omit<FamilyMember, 'id'>) => {
-        console.log('addMember not implemented', member);
-        toast.info('Funcionalidade disponível em breve');
-    };
-
-    const updateMember = async (id: string, updates: Partial<FamilyMember>) => {
-        console.log('updateMember not implemented', id, updates);
-    };
-
-    const deleteMember = async (id: string) => {
-        setMembers(prev => prev.filter(m => m.id !== id));
-    };
-
-    const addCategory = async (category: Omit<Category, 'id'>) => { console.log(category); };
-    const addAccount = async (account: Omit<BankAccount, 'id'>) => { console.log(account); };
-    const updateAccount = async (id: string, updates: Partial<BankAccount>) => { console.log(id, updates); };
-    const addCard = async (card: Omit<CreditCard, 'id'>) => { console.log(card); };
-    const updateCard = async (id: string, updates: Partial<CreditCard>) => { console.log(id, updates); };
-
-
     // --- Calculations ---
 
     const filteredTransactions = useMemo(() => {
@@ -432,14 +408,124 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             calculateExpensesByCategory,
             calculateCategoryPercentage,
             calculateSavingsRate,
-            addCategory,
-            addMember,
-            updateMember,
-            deleteMember,
-            addAccount,
-            updateAccount,
-            addCard,
-            updateCard
+
+            // Categories
+            addCategory: async (category) => {
+                if (!user) return;
+                const tempId = crypto.randomUUID();
+                const newCat = { ...category, id: tempId };
+                setCategories(prev => [...prev, newCat]);
+
+                const { data, error } = await supabase.from('categories').insert({
+                    user_id: user.id,
+                    name: category.name,
+                    type: category.type,
+                    color: category.color
+                }).select().single();
+
+                if (error) {
+                    console.error('Error adding category:', error);
+                    toast.error('Erro ao adicionar categoria');
+                    setCategories(prev => prev.filter(c => c.id !== tempId));
+                } else if (data) {
+                    setCategories(prev => prev.map(c => c.id === tempId ? { ...c, id: data.id } : c));
+                    toast.success('Categoria adicionada');
+                }
+            },
+
+            // Members (Complex due to Auth/Profile relation - Placeholder)
+            addMember: async (_member) => {
+                // Warning: Cannot insert into 'profiles' directly without an auth user.
+                // This would require an invitation flow or a separate 'family_members' table.
+                toast.warning('Adicionar membro requer convite de usuário (Não implementado nesta versão)');
+                console.warn('addMember skipped: Schema requires auth.users FK');
+            },
+            updateMember: async (id, updates) => {
+                // Allow updating local fields potentially, or income if authorized
+                if (!user) return;
+                const { error } = await supabase.from('profiles').update(updates).eq('id', id);
+                if (error) {
+                    toast.error('Erro ao atualizar membro');
+                } else {
+                    setMembers(prev => prev.map(m => m.id === id ? { ...m, ...updates } : m));
+                    toast.success('Membro atualizado');
+                }
+            },
+            deleteMember: async (_id) => {
+                // Dangerous: this deletes a profile
+                toast.error('Não é possível remover membros do sistema');
+            },
+
+            // Accounts
+            addAccount: async (account) => {
+                if (!user) return;
+                const tempId = crypto.randomUUID();
+                const newAcc = { ...account, id: tempId };
+                setAccounts(prev => [...prev, newAcc]);
+
+                const { data, error } = await supabase.from('accounts').insert({
+                    user_id: user.id,
+                    name: account.name,
+                    type: account.type,
+                    balance: account.balance,
+                    color: account.color
+                }).select().single();
+
+                if (error) {
+                    console.error(error);
+                    toast.error('Erro ao criar conta');
+                    setAccounts(prev => prev.filter(a => a.id !== tempId));
+                } else if (data) {
+                    setAccounts(prev => prev.map(a => a.id === tempId ? { ...a, id: data.id } : a));
+                    toast.success('Conta criada com sucesso');
+                }
+            },
+            updateAccount: async (id, updates) => {
+                setAccounts(prev => prev.map(a => a.id === id ? { ...a, ...updates } : a));
+                const { error } = await supabase.from('accounts').update(updates).eq('id', id);
+                if (error) toast.error('Erro ao atualizar conta');
+            },
+
+            // Cards
+            addCard: async (card) => {
+                if (!user) return;
+                const tempId = crypto.randomUUID();
+                const newCard = { ...card, id: tempId };
+                setCards(prev => [...prev, newCard]);
+
+                const { data, error } = await supabase.from('cards').insert({
+                    user_id: user.id,
+                    name: card.name, // mapped to bankName in UI usually
+                    limit_amount: card.limit,
+                    current_invoice: card.currentInvoice,
+                    closing_day: card.closingDay,
+                    due_day: card.dueDay,
+                    last_4_digits: card.last4Digits,
+                    theme: card.theme
+                }).select().single();
+
+                if (error) {
+                    console.error(error);
+                    toast.error('Erro ao adicionar cartão');
+                    setCards(prev => prev.filter(c => c.id !== tempId));
+                } else if (data) {
+                    setCards(prev => prev.map(c => c.id === tempId ? { ...c, id: data.id } : c));
+                    toast.success('Cartão adicionado');
+                }
+            },
+            updateCard: async (id, updates) => {
+                setCards(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
+
+                const dbUpdates: any = {};
+                if (updates.name) dbUpdates.name = updates.name;
+                if (updates.limit) dbUpdates.limit_amount = updates.limit;
+                if (updates.currentInvoice !== undefined) dbUpdates.current_invoice = updates.currentInvoice;
+                if (updates.last4Digits) dbUpdates.last_4_digits = updates.last4Digits;
+                if (updates.theme) dbUpdates.theme = updates.theme;
+
+                const { error } = await supabase.from('cards').update(dbUpdates).eq('id', id);
+                if (error) toast.error('Erro ao atualizar cartão');
+            }
         }}>
             {children}
         </FinanceContext.Provider>
