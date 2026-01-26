@@ -67,12 +67,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     role: data.role
                 });
             } else {
-                // Fallback if profile doesn't exist yet (should trigger on signup but sometimes race condition)
-                setUser({
+                // Profile missing? Create it now (Self-healing)
+                const newProfile = {
                     id: userId,
-                    name: email.split('@')[0],
                     email: email,
-                    role: 'Novo Membro'
+                    name: email.split('@')[0],
+                    role: 'Membro',
+                    avatar_url: `https://ui-avatars.com/api/?name=${email.split('@')[0]}&background=random`
+                };
+
+                const { error: insertError } = await supabase
+                    .from('profiles')
+                    .upsert(newProfile, { onConflict: 'id' });
+
+                if (insertError) {
+                    console.error('Error creating missing profile:', insertError);
+                }
+
+                setUser({
+                    id: newProfile.id,
+                    name: newProfile.name,
+                    email: newProfile.email,
+                    avatarUrl: newProfile.avatar_url,
+                    role: newProfile.role
                 });
             }
         } catch (error) {
